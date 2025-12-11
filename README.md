@@ -5,6 +5,9 @@ A family management web application built with React, Vite, Supabase, and Tailwi
 ## 🎯 Features
 
 - ✅ User Authentication (Sign up / Sign in)
+- ✅ Phone Number Integration
+- ✅ WhatsApp Invite System
+- ✅ Profile Management
 - ✅ Family Creation & Management
 - ✅ Role-Based Access Control (Admin, Admin Lite, Kid)
 - ✅ Invite Code System
@@ -337,6 +340,7 @@ CREATE TRIGGER on_auth_user_created
    b. Create helper functions
    c. Enable RLS and create policies
    d. Create triggers
+   e. **Update phone support**: Run `supabase-phone-update.sql`
 
 6. **Start development server**
    ```bash
@@ -354,9 +358,12 @@ fam-pulse/
 ├── src/
 │   ├── components/
 │   │   ├── auth/
-│   │   │   └── AuthForm.jsx          # Login/Signup form
-│   │   └── family/
-│   │       └── FamilyDashboard.jsx   # Family management UI
+│   │   │   └── AuthForm.jsx          # Login/Signup form with phone
+│   │   ├── family/
+│   │   │   ├── FamilyDashboard.jsx   # Family management UI
+│   │   │   └── AddMemberModal.jsx    # WhatsApp invite modal
+│   │   └── profile/
+│   │       └── EditProfile.jsx       # Profile editing modal
 │   ├── contexts/
 │   │   └── AuthContext.jsx           # Authentication state management
 │   ├── hooks/
@@ -366,6 +373,7 @@ fam-pulse/
 │   ├── supabaseClient.js             # Supabase client configuration
 │   └── index.css                     # Global styles (Tailwind)
 ├── public/                           # Static assets
+├── supabase-phone-update.sql         # Database update script
 ├── .env                              # Environment variables (not in git)
 ├── .gitignore
 ├── package.json
@@ -377,29 +385,51 @@ fam-pulse/
 ## 🔄 Current User Flow
 
 1. **Sign Up / Sign In**
-    - User creates account or logs in
+    - User creates account with phone number
     - Profile automatically created in database
 
-2. **Create Family**
+2. **Edit Profile** (if needed)
+    - Click "Edit Profile" in header
+    - Add/update phone number for WhatsApp features
+
+3. **Create Family**
     - User creates a family (becomes Admin)
     - Unique 8-character invite code generated
     - User automatically added as admin member
 
-3. **View Family Dashboard**
+4. **View Family Dashboard**
     - See family name and invite code
+    - WhatsApp share buttons for easy inviting
     - View all family members
     - See role badges (Admin, Admin Lite, Kid)
 
-4. **Manage Members** (based on role)
+5. **Add Members via WhatsApp**
+    - Search by phone number
+    - Automatically opens WhatsApp with invite message
+    - Works for both registered and unregistered users
+
+6. **Manage Members** (based on role)
     - **Admin**: Can change roles, remove any member
     - **Admin Lite**: Can remove kids only
     - **Kid**: View-only access
 
+## 📱 WhatsApp Integration
+
+### Features
+- **Phone-based member search** instead of email
+- **WhatsApp invite messages** with pre-filled family details
+- **Smart user detection** (registered vs unregistered users)
+- **One-click sharing** via WhatsApp or copy-paste
+- **Profile editing** to add/update phone numbers
+
+### How It Works
+1. **Add Phone Number**: Use "Edit Profile" to add your phone
+2. **Search by Phone**: Find family members by phone number
+3. **WhatsApp Invite**: Automatically opens WhatsApp with invite message
+4. **Share Invite Code**: Quick share buttons in family dashboard
+
 ## 🚧 Upcoming Features
 
-- [ ] Add member by email functionality
-- [ ] Join family via invite code
-- [ ] Profile editing
 - [ ] Avatar upload
 - [ ] Family settings
 - [ ] Transaction tracking (future)

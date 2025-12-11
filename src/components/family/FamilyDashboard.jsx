@@ -1,6 +1,7 @@
 import {useState} from 'react'
 import {useFamily} from '../../hooks/useFamily'
 import {useAuth} from '../../contexts/AuthContext'
+import AddMemberModal from './AddMemberModal'
 
 export default function FamilyDashboard() {
     const {user} = useAuth()
@@ -11,13 +12,18 @@ export default function FamilyDashboard() {
         loading,
         createFamily,
         updateMemberRole,
-        removeMember
+        removeMember,
+        joinFamilyByCode
     } = useFamily()
 
     const [showCreateFamily, setShowCreateFamily] = useState(false)
     const [familyName, setFamilyName] = useState('')
     const [creating, setCreating] = useState(false)
     const [error, setError] = useState('')
+    const [showAddMember, setShowAddMember] = useState(false)
+    const [showJoinFamily, setShowJoinFamily] = useState(false)
+    const [joinCode, setJoinCode] = useState('')
+    const [joining, setJoining] = useState(false)
 
     // Get current user's role in the family
     const currentUserRole = familyMembers.find(m => m.user_id === user.id)?.role
@@ -35,6 +41,21 @@ export default function FamilyDashboard() {
             setError(result.error)
         }
         setCreating(false)
+    }
+
+    const handleJoinFamily = async (e) => {
+        e.preventDefault()
+        setError('')
+        setJoining(true)
+
+        const result = await joinFamilyByCode(joinCode)
+        if (result.success) {
+            setShowJoinFamily(false)
+            setJoinCode('')
+        } else {
+            setError(result.error)
+        }
+        setJoining(false)
     }
 
     const handleRoleChange = async (memberId, newRole) => {
@@ -107,12 +128,20 @@ export default function FamilyDashboard() {
                 </div>
 
                 {!showCreateFamily ? (
-                    <button
-                        onClick={() => setShowCreateFamily(true)}
-                        className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition"
-                    >
-                        + Create Family
-                    </button>
+                    <div className="space-y-3">
+                        <button
+                            onClick={() => setShowCreateFamily(true)}
+                            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition"
+                        >
+                            + Create Family
+                        </button>
+                        <button
+                            onClick={() => setShowJoinFamily(true)}
+                            className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition"
+                        >
+                            Join Family with Code
+                        </button>
+                    </div>
                 ) : (
                     <form onSubmit={handleCreateFamily} className="space-y-4">
                         <div>
@@ -153,6 +182,46 @@ export default function FamilyDashboard() {
                         </div>
                     </form>
                 )}
+
+                {/* Join Family Form */}
+                {showJoinFamily && (
+                    <div className="mt-6 p-4 border-t">
+                        <h3 className="text-lg font-medium mb-4">Join Family</h3>
+                        <form onSubmit={handleJoinFamily} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Invite Code
+                                </label>
+                                <input
+                                    type="text"
+                                    value={joinCode}
+                                    onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    placeholder="Enter 8-character code"
+                                    maxLength={8}
+                                    required
+                                />
+                            </div>
+
+                            <div className="flex gap-3">
+                                <button
+                                    type="submit"
+                                    disabled={joining}
+                                    className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 transition"
+                                >
+                                    {joining ? 'Joining...' : 'Join Family'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowJoinFamily(false)}
+                                    className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-300 transition"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                )}
             </div>
         )
     }
@@ -178,6 +247,31 @@ export default function FamilyDashboard() {
                         </p>
                     </div>
                 </div>
+                
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                    <p className="text-sm font-semibold text-blue-800 mb-2">Share Invite Code:</p>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => {
+                                const message = `Join our family "${currentFamily?.name}" on Fam Pulse! Use code: ${currentFamily?.invite_code}\n\nSign up at: ${window.location.origin}`
+                                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`
+                                window.open(whatsappUrl, '_blank')
+                            }}
+                            className="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition text-sm"
+                        >
+                            📱 Share via WhatsApp
+                        </button>
+                        <button
+                            onClick={() => {
+                                navigator.clipboard.writeText(currentFamily?.invite_code)
+                                alert('Invite code copied!')
+                            }}
+                            className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition text-sm"
+                        >
+                            📋 Copy Code
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {/* Family Members */}
@@ -188,7 +282,9 @@ export default function FamilyDashboard() {
                     </h3>
                     {(currentUserRole === 'admin' || currentUserRole === 'admin_lite') && (
                         <button
-                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm">
+                            onClick={() => setShowAddMember(true)}
+                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm"
+                        >
                             + Add Member
                         </button>
                     )}
@@ -235,7 +331,6 @@ export default function FamilyDashboard() {
                                                 onChange={(e) => handleRoleChange(member.id, e.target.value)}
                                                 className="text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-indigo-500"
                                             >
-                                                <option value="admin">Admin</option>
                                                 <option value="admin_lite">Admin Lite</option>
                                                 <option value="kid">Kid</option>
                                             </select>
@@ -255,6 +350,18 @@ export default function FamilyDashboard() {
                     ))}
                 </div>
             </div>
+            {/* Add Member Modal */}
+            {showAddMember && (
+                <AddMemberModal
+                    familyId={currentFamily?.id}
+                    currentUserRole={currentUserRole}
+                    onClose={() => setShowAddMember(false)}
+                    onMemberAdded={() => {
+                        // Refresh family members list
+                        window.location.reload()
+                    }}
+                />
+            )}
         </div>
     )
 }

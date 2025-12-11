@@ -1,10 +1,13 @@
 import {AuthProvider, useAuth} from './contexts/AuthContext'
 import AuthForm from './components/auth/AuthForm'
 import FamilyDashboard from './components/family/FamilyDashboard'
+import EditProfile from './components/profile/EditProfile'
+import { useState } from 'react'
 import './App.css'
 
 function AppContent() {
     const {user, profile, loading, signOut} = useAuth()
+    const [showEditProfile, setShowEditProfile] = useState(false)
 
     if (loading) {
         return (
@@ -33,6 +36,12 @@ function AppContent() {
               {profile?.full_name || user.email}
             </span>
                         <button
+                            onClick={() => setShowEditProfile(true)}
+                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition text-sm"
+                        >
+                            Edit Profile
+                        </button>
+                        <button
                             onClick={signOut}
                             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm"
                         >
@@ -46,6 +55,14 @@ function AppContent() {
             <main className="max-w-7xl mx-auto px-4 py-8">
                 <FamilyDashboard/>
             </main>
+            
+            {/* Edit Profile Modal */}
+            {showEditProfile && (
+                <EditProfile
+                    onClose={() => setShowEditProfile(false)}
+                    onProfileUpdated={() => window.location.reload()}
+                />
+            )}
         </div>
     )
 }

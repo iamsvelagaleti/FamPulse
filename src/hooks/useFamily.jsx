@@ -181,6 +181,50 @@ export const useFamily = () => {
         }
     }
 
+    // Join family by invite code
+    const joinFamilyByCode = async (inviteCode) => {
+        try {
+            // Find family by invite code
+            const { data: family, error: familyError } = await supabase
+                .from('families')
+                .select('id')
+                .eq('invite_code', inviteCode)
+                .single()
+
+            if (familyError || !family) {
+                return { success: false, error: 'Invalid invite code' }
+            }
+
+            // Check if user is already a member
+            const { data: existingMember } = await supabase
+                .from('family_members')
+                .select('id')
+                .eq('family_id', family.id)
+                .eq('user_id', user.id)
+                .single()
+
+            if (existingMember) {
+                return { success: false, error: 'You are already a member of this family' }
+            }
+
+            // Add user to family as 'kid' by default
+            const { error: insertError } = await supabase
+                .from('family_members')
+                .insert({
+                    family_id: family.id,
+                    user_id: user.id,
+                    role: 'kid'
+                })
+
+            if (insertError) throw insertError
+
+            await fetchFamilies()
+            return { success: true }
+        } catch (err) {
+            return { success: false, error: err.message }
+        }
+    }
+
     useEffect(() => {
         if (user) {
             fetchFamilies()
@@ -204,6 +248,7 @@ export const useFamily = () => {
         addMember,
         updateMemberRole,
         removeMember,
-        refreshFamilies: fetchFamilies
+        refreshFamilies: fetchFamilies,
+        joinFamilyByCode
     }
 }
