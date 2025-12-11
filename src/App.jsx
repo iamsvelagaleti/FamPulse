@@ -26,24 +26,24 @@ function AppContent() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
+        <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
             {/* Header */}
-            <header className="bg-white/10 backdrop-blur-xl border-b border-white/20 sticky top-0 z-40">
+            <header className="bg-white/80 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-40">
                 <div className="px-4 py-4 flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-white">Fam Pulse</h1>
+                    <h1 className="text-2xl font-bold text-gray-800">Fam Pulse</h1>
                     <div className="flex items-center gap-2">
-                        <span className="text-white/90 text-sm truncate max-w-24">
+                        <span className="text-gray-700 text-sm truncate max-w-24">
                             {profile?.full_name || user.email}
                         </span>
                         <button
                             onClick={() => setShowEditProfile(true)}
-                            className="px-3 py-2 bg-white/20 backdrop-blur-md text-white rounded-xl hover:bg-white/30 transition text-xs border border-white/30"
+                            className="px-3 py-2 bg-white/60 backdrop-blur-md text-gray-700 rounded-xl hover:bg-white/80 transition text-xs border border-gray-300"
                         >
                             Edit
                         </button>
                         <button
                             onClick={signOut}
-                            className="px-3 py-2 bg-red-500/80 backdrop-blur-md text-white rounded-xl hover:bg-red-500 transition text-xs border border-red-400/50"
+                            className="px-3 py-2 bg-red-500/80 backdrop-blur-md text-white rounded-xl hover:bg-red-500 transition text-xs border border-red-400"
                         >
                             Sign Out
                         </button>

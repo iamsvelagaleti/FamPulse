@@ -49,14 +49,14 @@ export default function AuthForm() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center p-4">
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8 w-full max-w-sm mx-auto">
+        <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center p-4">
+            <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl shadow-2xl p-8 w-full max-w-sm mx-auto">
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-white mb-2">
+                    <h1 className="text-4xl font-bold text-gray-800 mb-2">
                         FamPulse
                     </h1>
-                    <p className="text-white/70">
+                    <p className="text-gray-600">
                         {isLogin ? 'Welcome back!' : 'Create your account'}
                     </p>
                 </div>
@@ -67,27 +67,27 @@ export default function AuthForm() {
                     {!isLogin && (
                         <>
                             <div>
-                                <label className="block text-sm font-medium text-white/90 mb-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Full Name
                                 </label>
                                 <input
                                     type="text"
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
-                                    className="w-full px-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-white/40 text-white placeholder-white/60 text-base"
+                                    className="w-full px-4 py-4 bg-white/60 backdrop-blur-md border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800 placeholder-gray-500 text-base"
                                     placeholder="Enter your full name"
                                     required={!isLogin}
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-white/90 mb-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Phone Number
                                 </label>
                                 <input
                                     type="tel"
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
-                                    className="w-full px-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-white/40 text-white placeholder-white/60 text-base"
+                                    className="w-full px-4 py-4 bg-white/60 backdrop-blur-md border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800 placeholder-gray-500 text-base"
                                     placeholder="+91 9876543210"
                                     required={!isLogin}
                                     pattern="[+]?[0-9]{10,13}"
@@ -114,14 +114,14 @@ export default function AuthForm() {
 
                     {/* Email */}
                     <div>
-                        <label className="block text-sm font-medium text-white/90 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Email
                         </label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-white/40 text-white placeholder-white/60 text-base"
+                            className="w-full px-4 py-4 bg-white/60 backdrop-blur-md border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800 placeholder-gray-500 text-base"
                             placeholder="Enter your email"
                             required
                         />
@@ -129,14 +129,14 @@ export default function AuthForm() {
 
                     {/* Password */}
                     <div>
-                        <label className="block text-sm font-medium text-white/90 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Password
                         </label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-white/40 text-white placeholder-white/60 text-base"
+                            className="w-full px-4 py-4 bg-white/60 backdrop-blur-md border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800 placeholder-gray-500 text-base"
                             placeholder="Enter your password"
                             required
                             minLength={6}
@@ -161,7 +161,7 @@ export default function AuthForm() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-white/20 backdrop-blur-md text-white py-4 rounded-2xl font-semibold hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base border border-white/30"
+                        className="w-full bg-blue-500/80 backdrop-blur-md text-white py-4 rounded-2xl font-semibold hover:bg-blue-600/80 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base border border-blue-400"
                     >
                         {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Sign Up')}
                     </button>
@@ -176,7 +176,7 @@ export default function AuthForm() {
                             setMessage('')
                             setInviteCode('')
                         }}
-                        className="text-white/90 hover:text-white font-medium"
+                        className="text-gray-600 hover:text-gray-800 font-medium"
                     >
                         {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
                     </button>

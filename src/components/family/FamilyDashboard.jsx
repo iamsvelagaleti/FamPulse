@@ -118,12 +118,12 @@ export default function FamilyDashboard() {
     // No family exists - show create family
     if (families.length === 0) {
         return (
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8">
+            <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl shadow-2xl p-8">
                 <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-white mb-2">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2">
                         Create Your Family
                     </h2>
-                    <p className="text-white/70">
+                    <p className="text-gray-600">
                         Get started by creating your family group
                     </p>
                 </div>
@@ -132,13 +132,13 @@ export default function FamilyDashboard() {
                     <div className="space-y-3">
                         <button
                             onClick={() => setShowCreateFamily(true)}
-                            className="w-full bg-white/20 backdrop-blur-md text-white py-4 rounded-2xl font-semibold hover:bg-white/30 transition border border-white/30"
+                            className="w-full bg-blue-500/80 backdrop-blur-md text-white py-4 rounded-2xl font-semibold hover:bg-blue-600/80 transition border border-blue-400"
                         >
                             + Create Family
                         </button>
                         <button
                             onClick={() => setShowJoinFamily(true)}
-                            className="w-full bg-green-500/30 backdrop-blur-md text-white py-4 rounded-2xl font-semibold hover:bg-green-500/40 transition border border-green-400/50"
+                            className="w-full bg-green-500/80 backdrop-blur-md text-white py-4 rounded-2xl font-semibold hover:bg-green-600/80 transition border border-green-400"
                         >
                             Join Family with Code
                         </button>
@@ -199,19 +199,19 @@ export default function FamilyDashboard() {
     return (
         <div className="space-y-6">
             {/* Family Header */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-6">
+            <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl shadow-2xl p-6">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h2 className="text-2xl font-bold text-white">
+                        <h2 className="text-2xl font-bold text-gray-800">
                             {currentFamily?.name}
                         </h2>
-                        <p className="text-sm text-white/70 mt-1">
-                            Your Role: <span className="font-medium text-white/90">{getRoleLabel(currentUserRole)}</span>
+                        <p className="text-sm text-gray-600 mt-1">
+                            Your Role: <span className="font-medium text-gray-700">{getRoleLabel(currentUserRole)}</span>
                         </p>
                     </div>
                     <div className="text-right">
-                        <p className="text-sm text-white/70">Invite Code</p>
-                        <p className="text-lg font-mono font-bold text-white">
+                        <p className="text-sm text-gray-600">Invite Code</p>
+                        <p className="text-lg font-mono font-bold text-gray-800">
                             {currentFamily?.invite_code}
                         </p>
                     </div>
@@ -244,15 +244,15 @@ export default function FamilyDashboard() {
             </div>
 
             {/* Family Members */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-6">
+            <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl shadow-2xl p-6">
                 <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-bold text-white">
+                    <h3 className="text-xl font-bold text-gray-800">
                         Family Members ({familyMembers.length})
                     </h3>
                     {(currentUserRole === 'admin' || currentUserRole === 'admin_lite') && (
                         <button
                             onClick={() => setShowAddMember(true)}
-                            className="px-4 py-2 bg-white/20 backdrop-blur-md text-white rounded-xl hover:bg-white/30 transition text-sm font-medium border border-white/30"
+                            className="px-4 py-2 bg-blue-500/80 backdrop-blur-md text-white rounded-xl hover:bg-blue-600/80 transition text-sm font-medium border border-blue-400"
                         >
                             + Add Member
                         </button>
@@ -263,24 +263,24 @@ export default function FamilyDashboard() {
                     {familyMembers.map((member) => (
                         <div
                             key={member.id}
-                            className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl hover:bg-white/10 transition"
+                            className="flex items-center justify-between p-4 bg-white/40 backdrop-blur-md border border-gray-200 rounded-2xl hover:bg-white/60 transition"
                         >
                             <div className="flex items-center gap-4">
                                 {/* Avatar */}
                                 <div
-                                    className="w-12 h-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                    className="w-12 h-12 bg-blue-500/80 backdrop-blur-md border border-blue-400 rounded-full flex items-center justify-center text-white font-bold text-lg">
                                     {member.user.full_name?.charAt(0) || 'U'}
                                 </div>
 
                                 {/* Member Info */}
                                 <div>
-                                    <p className="font-semibold text-white">
+                                    <p className="font-semibold text-gray-800">
                                         {member.user.full_name}
                                         {member.user_id === user.id && (
-                                            <span className="text-sm text-white/60 ml-2">(You)</span>
+                                            <span className="text-sm text-gray-500 ml-2">(You)</span>
                                         )}
                                     </p>
-                                    <p className="text-sm text-white/70">{member.user.email}</p>
+                                    <p className="text-sm text-gray-600">{member.user.email}</p>
                                 </div>
                             </div>
 

@@ -68,25 +68,25 @@ export default function JoinFamily({ onClose, onJoined }) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl max-w-sm w-full p-6">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white/90 backdrop-blur-xl border border-gray-200 rounded-3xl shadow-2xl max-w-sm w-full p-6">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-white">Join Family</h2>
-                    <button onClick={onClose} className="text-white/60 hover:text-white text-2xl">
+                    <h2 className="text-2xl font-bold text-gray-800">Join Family</h2>
+                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-2xl">
                         ×
                     </button>
                 </div>
 
                 <form onSubmit={handleJoin} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-white/90 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Invite Code
                         </label>
                         <input
                             type="text"
                             value={inviteCode}
                             onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                            className="w-full px-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-white/40 text-white placeholder-white/60 text-center text-2xl font-mono tracking-wider"
+                            className="w-full px-4 py-4 bg-white/60 backdrop-blur-md border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800 placeholder-gray-500 text-center text-2xl font-mono tracking-wider"
                             placeholder="ABC12XYZ"
                             maxLength={8}
                             required
@@ -103,14 +103,14 @@ export default function JoinFamily({ onClose, onJoined }) {
                         <button
                             type="submit"
                             disabled={loading || inviteCode.length !== 8}
-                            className="flex-1 bg-white/20 backdrop-blur-md text-white py-3 rounded-2xl font-semibold hover:bg-white/30 disabled:opacity-50 border border-white/30"
+                            className="flex-1 bg-blue-500/80 backdrop-blur-md text-white py-3 rounded-2xl font-semibold hover:bg-blue-600/80 disabled:opacity-50 border border-blue-400"
                         >
                             {loading ? 'Joining...' : 'Join Family'}
                         </button>
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 bg-white/10 backdrop-blur-md text-white py-3 rounded-2xl font-semibold hover:bg-white/20 border border-white/20"
+                            className="flex-1 bg-white/60 backdrop-blur-md text-gray-700 py-3 rounded-2xl font-semibold hover:bg-white/80 border border-gray-300"
                         >
                             Cancel
                         </button>
