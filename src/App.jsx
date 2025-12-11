@@ -26,24 +26,24 @@ function AppContent() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
             {/* Header */}
-            <header className="bg-white shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-indigo-600">Fam Pulse</h1>
-                    <div className="flex items-center gap-4">
-            <span className="text-gray-700">
-              {profile?.full_name || user.email}
-            </span>
+            <header className="bg-white/10 backdrop-blur-xl border-b border-white/20 sticky top-0 z-40">
+                <div className="px-4 py-4 flex justify-between items-center">
+                    <h1 className="text-2xl font-bold text-white">Fam Pulse</h1>
+                    <div className="flex items-center gap-2">
+                        <span className="text-white/90 text-sm truncate max-w-24">
+                            {profile?.full_name || user.email}
+                        </span>
                         <button
                             onClick={() => setShowEditProfile(true)}
-                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition text-sm"
+                            className="px-3 py-2 bg-white/20 backdrop-blur-md text-white rounded-xl hover:bg-white/30 transition text-xs border border-white/30"
                         >
-                            Edit Profile
+                            Edit
                         </button>
                         <button
                             onClick={signOut}
-                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm"
+                            className="px-3 py-2 bg-red-500/80 backdrop-blur-md text-white rounded-xl hover:bg-red-500 transition text-xs border border-red-400/50"
                         >
                             Sign Out
                         </button>
@@ -52,7 +52,7 @@ function AppContent() {
             </header>
 
             {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-4 py-8">
+            <main className="px-4 py-6">
                 <FamilyDashboard/>
             </main>
             

@@ -131,13 +131,13 @@ Welcome to the family! 🎉`
     }
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800">Add Family Member</h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 w-full max-w-sm mx-auto shadow-2xl">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-bold text-white">Add Family Member</h3>
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600"
+                        className="text-white/60 hover:text-white text-2xl"
                     >
                         ✕
                     </button>
@@ -162,16 +162,16 @@ Welcome to the family! 🎉`
 
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-white/90 mb-2">
                             Phone Number
                         </label>
-                        <div className="flex gap-2">
+                        <div className="flex gap-3">
                             <input
                                 type="tel"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleSearchUser()}
-                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                className="flex-1 px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-white/40 text-white placeholder-white/60"
                                 placeholder="+91 9876543210"
                                 disabled={loading}
                             />
@@ -179,7 +179,7 @@ Welcome to the family! 🎉`
                                 type="button"
                                 onClick={handleSearchUser}
                                 disabled={loading}
-                                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition"
+                                className="px-6 py-3 bg-white/20 backdrop-blur-md text-white rounded-2xl hover:bg-white/30 disabled:opacity-50 transition border border-white/30 font-medium"
                             >
                                 Search
                             </button>
@@ -190,8 +190,8 @@ Welcome to the family! 🎉`
                     </div>
 
                     {searchResult && (
-                        <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                            <p className="text-sm text-green-800 font-medium">
+                        <div className="p-4 bg-green-500/20 backdrop-blur-md border border-green-400/30 rounded-2xl">
+                            <p className="text-sm text-green-200 font-medium">
                                 {searchResult.notRegistered ? (
                                     `Ready to invite ${phone} via WhatsApp`
                                 ) : (
@@ -202,13 +202,13 @@ Welcome to the family! 🎉`
                     )}
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-white/90 mb-2">
                             Role
                         </label>
                         <select
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-white/40 text-white"
                         >
                             {currentUserRole === 'admin' && (
                                 <option value="admin_lite">Admin Lite</option>
@@ -223,8 +223,8 @@ Welcome to the family! 🎉`
                     </div>
 
                     {error && (
-                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                            <p className="text-sm text-red-600">{error}</p>
+                        <div className="p-4 bg-red-500/20 backdrop-blur-md border border-red-400/30 rounded-2xl">
+                            <p className="text-sm text-red-200">{error}</p>
                         </div>
                     )}
 
@@ -233,14 +233,14 @@ Welcome to the family! 🎉`
                             type="button"
                             onClick={handleAddMember}
                             disabled={loading || !searchResult}
-                            className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 transition"
+                            className="flex-1 bg-green-500/30 backdrop-blur-md text-white py-3 rounded-2xl font-semibold hover:bg-green-500/40 disabled:opacity-50 transition border border-green-400/50"
                         >
                             {loading ? 'Processing...' : '📱 Send via WhatsApp'}
                         </button>
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-300 transition"
+                            className="flex-1 bg-white/20 backdrop-blur-md text-white py-3 rounded-2xl font-semibold hover:bg-white/30 transition border border-white/30"
                         >
                             Cancel
                         </button>

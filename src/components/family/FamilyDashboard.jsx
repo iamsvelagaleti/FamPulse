@@ -2,6 +2,7 @@ import {useState} from 'react'
 import {useFamily} from '../../hooks/useFamily'
 import {useAuth} from '../../contexts/AuthContext'
 import AddMemberModal from './AddMemberModal'
+import JoinFamily from './JoinFamily'
 
 export default function FamilyDashboard() {
     const {user} = useAuth()
@@ -117,12 +118,12 @@ export default function FamilyDashboard() {
     // No family exists - show create family
     if (families.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-lg p-8">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8">
                 <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                    <h2 className="text-2xl font-bold text-white mb-2">
                         Create Your Family
                     </h2>
-                    <p className="text-gray-600">
+                    <p className="text-white/70">
                         Get started by creating your family group
                     </p>
                 </div>
@@ -131,13 +132,13 @@ export default function FamilyDashboard() {
                     <div className="space-y-3">
                         <button
                             onClick={() => setShowCreateFamily(true)}
-                            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition"
+                            className="w-full bg-white/20 backdrop-blur-md text-white py-4 rounded-2xl font-semibold hover:bg-white/30 transition border border-white/30"
                         >
                             + Create Family
                         </button>
                         <button
                             onClick={() => setShowJoinFamily(true)}
-                            className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition"
+                            className="w-full bg-green-500/30 backdrop-blur-md text-white py-4 rounded-2xl font-semibold hover:bg-green-500/40 transition border border-green-400/50"
                         >
                             Join Family with Code
                         </button>
@@ -145,22 +146,22 @@ export default function FamilyDashboard() {
                 ) : (
                     <form onSubmit={handleCreateFamily} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-white/90 mb-2">
                                 Family Name
                             </label>
                             <input
                                 type="text"
                                 value={familyName}
                                 onChange={(e) => setFamilyName(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-white/40 text-white placeholder-white/60"
                                 placeholder="e.g., Smith Family"
                                 required
                             />
                         </div>
 
                         {error && (
-                            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                                <p className="text-sm text-red-600">{error}</p>
+                            <div className="p-4 bg-red-500/20 backdrop-blur-md border border-red-400/30 rounded-2xl">
+                                <p className="text-sm text-red-200">{error}</p>
                             </div>
                         )}
 
@@ -168,14 +169,14 @@ export default function FamilyDashboard() {
                             <button
                                 type="submit"
                                 disabled={creating}
-                                className="flex-1 bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50 transition"
+                                className="flex-1 bg-white/20 backdrop-blur-md text-white py-3 rounded-2xl font-semibold hover:bg-white/30 disabled:opacity-50 transition border border-white/30"
                             >
                                 {creating ? 'Creating...' : 'Create'}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setShowCreateFamily(false)}
-                                className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-300 transition"
+                                className="flex-1 bg-white/10 backdrop-blur-md text-white py-3 rounded-2xl font-semibold hover:bg-white/20 transition border border-white/20"
                             >
                                 Cancel
                             </button>
@@ -183,44 +184,12 @@ export default function FamilyDashboard() {
                     </form>
                 )}
 
-                {/* Join Family Form */}
+                {/* Join Family Modal */}
                 {showJoinFamily && (
-                    <div className="mt-6 p-4 border-t">
-                        <h3 className="text-lg font-medium mb-4">Join Family</h3>
-                        <form onSubmit={handleJoinFamily} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Invite Code
-                                </label>
-                                <input
-                                    type="text"
-                                    value={joinCode}
-                                    onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                    placeholder="Enter 8-character code"
-                                    maxLength={8}
-                                    required
-                                />
-                            </div>
-
-                            <div className="flex gap-3">
-                                <button
-                                    type="submit"
-                                    disabled={joining}
-                                    className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 transition"
-                                >
-                                    {joining ? 'Joining...' : 'Join Family'}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowJoinFamily(false)}
-                                    className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-300 transition"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                    <JoinFamily
+                        onClose={() => setShowJoinFamily(false)}
+                        onJoined={() => window.location.reload()}
+                    />
                 )}
             </div>
         )
@@ -230,60 +199,60 @@ export default function FamilyDashboard() {
     return (
         <div className="space-y-6">
             {/* Family Header */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-6">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-800">
+                        <h2 className="text-2xl font-bold text-white">
                             {currentFamily?.name}
                         </h2>
-                        <p className="text-sm text-gray-500 mt-1">
-                            Your Role: <span className="font-medium">{getRoleLabel(currentUserRole)}</span>
+                        <p className="text-sm text-white/70 mt-1">
+                            Your Role: <span className="font-medium text-white/90">{getRoleLabel(currentUserRole)}</span>
                         </p>
                     </div>
                     <div className="text-right">
-                        <p className="text-sm text-gray-500">Invite Code</p>
-                        <p className="text-lg font-mono font-bold text-indigo-600">
+                        <p className="text-sm text-white/70">Invite Code</p>
+                        <p className="text-lg font-mono font-bold text-white">
                             {currentFamily?.invite_code}
                         </p>
                     </div>
                 </div>
                 
-                <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                    <p className="text-sm font-semibold text-blue-800 mb-2">Share Invite Code:</p>
-                    <div className="flex gap-2">
+                <div className="mt-4 p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl">
+                    <p className="text-sm font-semibold text-white/90 mb-3">Share Invite Code:</p>
+                    <div className="flex gap-3">
                         <button
                             onClick={() => {
                                 const message = `Join our family "${currentFamily?.name}" on Fam Pulse! Use code: ${currentFamily?.invite_code}\n\nSign up at: ${window.location.origin}`
                                 const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`
                                 window.open(whatsappUrl, '_blank')
                             }}
-                            className="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition text-sm"
+                            className="flex-1 bg-green-500/30 backdrop-blur-md text-white py-3 rounded-xl hover:bg-green-500/40 transition text-sm font-medium border border-green-400/50"
                         >
-                            📱 Share via WhatsApp
+                            📱 WhatsApp
                         </button>
                         <button
                             onClick={() => {
                                 navigator.clipboard.writeText(currentFamily?.invite_code)
                                 alert('Invite code copied!')
                             }}
-                            className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition text-sm"
+                            className="flex-1 bg-white/20 backdrop-blur-md text-white py-3 rounded-xl hover:bg-white/30 transition text-sm font-medium border border-white/30"
                         >
-                            📋 Copy Code
+                            📋 Copy
                         </button>
                     </div>
                 </div>
             </div>
 
             {/* Family Members */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-6">
                 <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-bold text-gray-800">
+                    <h3 className="text-xl font-bold text-white">
                         Family Members ({familyMembers.length})
                     </h3>
                     {(currentUserRole === 'admin' || currentUserRole === 'admin_lite') && (
                         <button
                             onClick={() => setShowAddMember(true)}
-                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm"
+                            className="px-4 py-2 bg-white/20 backdrop-blur-md text-white rounded-xl hover:bg-white/30 transition text-sm font-medium border border-white/30"
                         >
                             + Add Member
                         </button>
@@ -294,24 +263,24 @@ export default function FamilyDashboard() {
                     {familyMembers.map((member) => (
                         <div
                             key={member.id}
-                            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                            className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl hover:bg-white/10 transition"
                         >
                             <div className="flex items-center gap-4">
                                 {/* Avatar */}
                                 <div
-                                    className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                    className="w-12 h-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center text-white font-bold text-lg">
                                     {member.user.full_name?.charAt(0) || 'U'}
                                 </div>
 
                                 {/* Member Info */}
                                 <div>
-                                    <p className="font-semibold text-gray-800">
+                                    <p className="font-semibold text-white">
                                         {member.user.full_name}
                                         {member.user_id === user.id && (
-                                            <span className="text-sm text-gray-500 ml-2">(You)</span>
+                                            <span className="text-sm text-white/60 ml-2">(You)</span>
                                         )}
                                     </p>
-                                    <p className="text-sm text-gray-500">{member.user.email}</p>
+                                    <p className="text-sm text-white/70">{member.user.email}</p>
                                 </div>
                             </div>
 
