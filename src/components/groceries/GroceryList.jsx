@@ -728,23 +728,23 @@ export default function GroceryList({ isDark }) {
                                             onClick={() => addToList(item.id, item.quantity_type)}
                                             className={`w-full p-3 rounded-xl text-left transition-all active:scale-95 cursor-pointer ${isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'}`}
                                         >
-                                            <div className="flex items-center gap-2">
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        startEdit(item)
-                                                    }}
-                                                    className={`p-1.5 rounded-lg transition-all active:scale-95 flex-shrink-0 ${isDark ? 'bg-gray-600 text-gray-300 hover:bg-gray-500' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
-                                                >
-                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                    </svg>
-                                                </button>
-                                                <div className="flex-1 min-w-0">
-                                                    <div className={`font-semibold truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{item.name}</div>
-                                                    {item.category && <div className={`text-xs truncate ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{item.category.name}</div>}
+                                            <div className="space-y-2">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{item.name}</div>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            startEdit(item)
+                                                        }}
+                                                        className={`p-1 rounded-lg transition-all active:scale-95 flex-shrink-0 ${isDark ? 'bg-gray-600 text-gray-300 hover:bg-gray-500' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                                                    >
+                                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                        </svg>
+                                                    </button>
                                                 </div>
-                                                <span className={`px-2 py-0.5 text-white text-xs rounded-full font-medium capitalize flex-shrink-0 ${
+                                                {item.category && <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{item.category.name}</div>}
+                                                <span className={`inline-block px-2 py-0.5 text-white text-xs rounded-full font-medium capitalize ${
                                                     item.quantity_type === 'kgs' ? 'bg-gradient-to-r from-purple-400 to-pink-400' :
                                                     item.quantity_type === 'liters' ? 'bg-gradient-to-r from-blue-400 to-cyan-400' :
                                                     item.quantity_type === 'dozens' ? 'bg-gradient-to-r from-orange-400 to-amber-400' :
