@@ -978,7 +978,7 @@ export default function GroceryList({ isDark }) {
                         )}
                         <button
                             onClick={() => setSearchMode(searchMode === 'item' ? 'date' : 'item')}
-                            className={`w-full py-3 rounded-xl text-sm font-medium transition-all active:scale-95 ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}
+                            className={`w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}
                         >
                             {searchMode === 'item' ? 'Filter by Date' : 'Search by Item'}
                         </button>
