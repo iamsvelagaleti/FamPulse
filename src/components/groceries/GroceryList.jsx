@@ -574,25 +574,26 @@ export default function GroceryList({ isDark }) {
             )}
 
         <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'} flex items-center gap-2`}>
-                    <ShoppingCart className="w-7 h-7" />
+            <div className="flex items-center justify-between flex-wrap gap-2">
+                <h2 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'} flex items-center gap-2`}>
+                    <ShoppingCart className="w-6 h-6 sm:w-7 sm:h-7" />
                     Groceries
                 </h2>
                 <div className="flex gap-2">
                     <button
                         onClick={() => setShowManageCategories(true)}
-                        className="px-4 py-2 rounded-xl flex items-center gap-2 transition-all active:scale-95 bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
+                        className="px-3 sm:px-4 py-2 rounded-xl flex items-center gap-1 sm:gap-2 transition-all active:scale-95 bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg text-sm sm:text-base"
                     >
                         <Tag className="w-4 h-4" />
-                        Categories
+                        <span className="hidden sm:inline">Categories</span>
                     </button>
                     <button
                         onClick={() => setShowHistory(!showHistory)}
-                        className="px-4 py-2 rounded-xl flex items-center gap-2 transition-all active:scale-95 bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg"
+                        className="px-3 sm:px-4 py-2 rounded-xl flex items-center gap-1 sm:gap-2 transition-all active:scale-95 bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg text-sm sm:text-base"
                     >
                         <History className="w-4 h-4" />
-                        {showHistory ? 'Shopping List' : 'History'}
+                        <span className="hidden sm:inline">{showHistory ? 'Shopping List' : 'History'}</span>
+                        <span className="sm:hidden">{showHistory ? 'List' : 'History'}</span>
                     </button>
                 </div>
             </div>
@@ -685,7 +686,7 @@ export default function GroceryList({ isDark }) {
                     {/* All Items */}
                     {allItems.length > 0 && (
                         <div className={`p-4 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}>
-                            <div key={refreshKey} className="grid grid-cols-3 gap-2">
+                            <div key={refreshKey} className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 {allItems.filter(item => !shoppingList.some(listItem => listItem.item?.id === item.id)).map((item) => (
                                     editingItem === item.id ? (
                                         <div key={item.id} className={`p-3 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}>
