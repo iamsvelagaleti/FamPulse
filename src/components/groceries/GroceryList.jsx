@@ -23,9 +23,9 @@ export default function GroceryList({ isDark }) {
     const [showHistory, setShowHistory] = useState(false)
     const [history, setHistory] = useState([])
     const [historySearch, setHistorySearch] = useState('')
-    const [startDate, setStartDate] = useState('')
-    const [endDate, setEndDate] = useState('')
-    const [searchMode, setSearchMode] = useState('item')
+    const [startDate] = useState('')
+    const [endDate] = useState('')
+
     const [refreshKey, setRefreshKey] = useState(0)
     const [deleteConfirm, setDeleteConfirm] = useState(null)
 
@@ -130,7 +130,20 @@ export default function GroceryList({ isDark }) {
             .order('bought_at', { ascending: false })
             .limit(50)
 
-        setHistory(data || [])
+        // Calculate price trends
+        const historyWithTrends = (data || []).map((item, index) => {
+            if (!item.price) return { ...item, priceTrend: null }
+            
+            // Find previous purchase of same item
+            const prevPurchase = data.slice(index + 1).find(h => h.item_name === item.item_name && h.price)
+            
+            if (!prevPurchase) return { ...item, priceTrend: null }
+            
+            const priceDiff = parseFloat(item.price) - parseFloat(prevPurchase.price)
+            return { ...item, priceTrend: priceDiff }
+        })
+
+        setHistory(historyWithTrends)
     }, [familyId, historySearch, startDate, endDate])
 
     const addToList = async (itemId, quantityType) => {
@@ -331,7 +344,6 @@ export default function GroceryList({ isDark }) {
             .eq('id', item.id)
 
         resetSwipe()
-        await fetchShoppingList()
     }
 
     const startEdit = (item) => {
@@ -367,7 +379,7 @@ export default function GroceryList({ isDark }) {
         if (familyId && showHistory) {
             fetchHistory()
         }
-    }, [familyId, showHistory, historySearch, startDate, endDate])
+    }, [familyId, showHistory, historySearch, startDate, endDate, fetchHistory])
 
     useEffect(() => {
         if (familyId) {
@@ -400,7 +412,7 @@ export default function GroceryList({ isDark }) {
         const pollInterval = setInterval(() => {
             fetchShoppingList()
             fetchAllItems()
-            fetchHistory()
+            if (showHistory) fetchHistory()
         }, 3000)
 
         // Subscribe to shopping list changes (INSERT, UPDATE, DELETE)
@@ -466,7 +478,7 @@ export default function GroceryList({ isDark }) {
             supabase.removeChannel(groceryItemsChannel)
             supabase.removeChannel(historyChannel)
         }
-    }, [familyId, showHistory, fetchShoppingList, fetchAllItems, fetchHistory])
+    }, [familyId, showHistory])
 
     const confirmDeleteHistory = async () => {
         if (!deleteConfirm) return
@@ -946,42 +958,15 @@ export default function GroceryList({ isDark }) {
             ) : (
                 // History View
                 <div className="space-y-4">
-                    <div className="space-y-2">
-                        {searchMode === 'item' ? (
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input
-                                    type="text"
-                                    value={historySearch}
-                                    onChange={(e) => setHistorySearch(e.target.value)}
-                                    placeholder="Search by item name..."
-                                    className={`w-full pl-10 pr-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-800 border border-gray-700 text-white placeholder-gray-500' : 'bg-white border border-gray-200 text-gray-800 placeholder-gray-400'}`}
-                                />
-                            </div>
-                        ) : (
-                            <>
-                                <input
-                                    type="date"
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                    className={`block w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-800 border border-gray-700 text-white' : 'bg-white border border-gray-200 text-gray-800'}`}
-                                    style={{ minWidth: 0 }}
-                                />
-                                <input
-                                    type="date"
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                    className={`block w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-800 border border-gray-700 text-white' : 'bg-white border border-gray-200 text-gray-800'}`}
-                                    style={{ minWidth: 0 }}
-                                />
-                            </>
-                        )}
-                        <button
-                            onClick={() => setSearchMode(searchMode === 'item' ? 'date' : 'item')}
-                            className={`w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}
-                        >
-                            {searchMode === 'item' ? 'Filter by Date' : 'Search by Item'}
-                        </button>
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                            type="text"
+                            value={historySearch}
+                            onChange={(e) => setHistorySearch(e.target.value)}
+                            placeholder="Search by item name..."
+                            className={`w-full pl-10 pr-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-800 border border-gray-700 text-white placeholder-gray-500' : 'bg-white border border-gray-200 text-gray-800 placeholder-gray-400'}`}
+                        />
                     </div>
 
                     <div className="space-y-2">
@@ -1026,12 +1011,23 @@ export default function GroceryList({ isDark }) {
                                                         {item.item_name}
                                                     </h3>
                                                     <div className={`text-xs mt-0.5 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                        {item.quantity} {item.quantity_type} • {new Date(item.bought_at).toLocaleDateString()}
+                                                        {item.quantity} {item.quantity_type} • {new Date(item.bought_at).toLocaleString()}
                                                     </div>
                                                 </div>
                                                 {item.price && (
-                                                    <div className={`text-sm font-bold flex-shrink-0 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                                        ₹{item.price}
+                                                    <div className="flex items-center gap-1 flex-shrink-0">
+                                                        <div className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                            ₹{item.price}
+                                                        </div>
+                                                        {item.priceTrend !== null && (
+                                                            <div className={`text-xs font-bold ${
+                                                                item.priceTrend > 0 ? 'text-red-500' : 
+                                                                item.priceTrend < 0 ? 'text-green-500' : 
+                                                                'text-gray-400'
+                                                            }`}>
+                                                                {item.priceTrend > 0 ? '↑' : item.priceTrend < 0 ? '↓' : '='}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 )}
                                             </div>
