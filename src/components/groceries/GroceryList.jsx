@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { supabase } from '../../supabaseClient'
 import { useAuth } from '../../contexts/AuthContext'
-import { Search, Plus, Check, X, ShoppingCart, History, Package, Trash2, Tag } from 'lucide-react'
+import { Search, Plus, Check, X, ShoppingCart, History, Package, Trash2, Tag, List } from 'lucide-react'
 
 export default function GroceryList({ isDark }) {
     const { user } = useAuth()
@@ -591,9 +591,8 @@ export default function GroceryList({ isDark }) {
                         onClick={() => setShowHistory(!showHistory)}
                         className="px-3 sm:px-4 py-2 rounded-xl flex items-center gap-1 sm:gap-2 transition-all active:scale-95 bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg text-sm sm:text-base"
                     >
-                        <History className="w-4 h-4" />
+                        {showHistory ? <List className="w-4 h-4" /> : <History className="w-4 h-4" />}
                         <span className="hidden sm:inline">{showHistory ? 'Shopping List' : 'History'}</span>
-                        <span className="sm:hidden">{showHistory ? 'List' : 'History'}</span>
                     </button>
                 </div>
             </div>
@@ -1013,7 +1012,7 @@ export default function GroceryList({ isDark }) {
                                             onTouchEnd={() => userRole === 'admin' && handleSwipeEnd(item, true)}
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-white text-sm font-semibold overflow-hidden flex-shrink-0">
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-white text-xs font-semibold overflow-hidden flex-shrink-0">
                                                     {item.bought_by_profile?.avatar_url ? (
                                                         <img src={item.bought_by_profile.avatar_url} alt="" className="w-full h-full object-cover" />
                                                     ) : (
@@ -1021,17 +1020,15 @@ export default function GroceryList({ isDark }) {
                                                     )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center justify-between gap-2">
-                                                        <h3 className={`text-xl font-black truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                                            {item.item_name} ({item.quantity} {item.quantity_type})
-                                                        </h3>
-                                                        <span className={`text-xs flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                            {new Date(item.bought_at).toLocaleDateString()}
-                                                        </span>
+                                                    <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                        {item.item_name}
+                                                    </h3>
+                                                    <div className={`text-xs mt-0.5 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                        {item.quantity} {item.quantity_type} • {new Date(item.bought_at).toLocaleDateString()}
                                                     </div>
                                                 </div>
                                                 {item.price && (
-                                                    <div className={`text-lg font-bold flex-shrink-0 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                    <div className={`text-sm font-bold flex-shrink-0 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                                                         ₹{item.price}
                                                     </div>
                                                 )}
