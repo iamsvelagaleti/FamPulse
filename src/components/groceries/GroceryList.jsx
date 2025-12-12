@@ -1015,12 +1015,12 @@ export default function GroceryList({ isDark }) {
                                                     </div>
                                                 </div>
                                                 {item.price && (
-                                                    <div className="flex items-center gap-1 flex-shrink-0">
-                                                        <div className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                    <div className="flex items-center gap-0.5 flex-shrink-0">
+                                                        <div className={`text-sm sm:text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                                                             ₹{item.price}
                                                         </div>
                                                         {item.priceTrend !== null && (
-                                                            <div className={`text-xs font-bold ${
+                                                            <div className={`text-sm sm:text-base font-bold ${
                                                                 item.priceTrend > 0 ? 'text-red-500' : 
                                                                 item.priceTrend < 0 ? 'text-green-500' : 
                                                                 'text-gray-400'
