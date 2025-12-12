@@ -946,9 +946,9 @@ export default function GroceryList({ isDark }) {
             ) : (
                 // History View
                 <div className="space-y-4">
-                    <div className="flex gap-2">
+                    <div className="space-y-2">
                         {searchMode === 'item' ? (
-                            <div className="relative flex-1">
+                            <div className="relative">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                                 <input
                                     type="text"
@@ -959,28 +959,26 @@ export default function GroceryList({ isDark }) {
                                 />
                             </div>
                         ) : (
-                            <div className="flex-1 space-y-2">
+                            <>
                                 <input
                                     type="date"
                                     value={startDate}
                                     onChange={(e) => setStartDate(e.target.value)}
-                                    placeholder="Start date"
                                     className={`w-full px-3 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-800 border border-gray-700 text-white' : 'bg-white border border-gray-200 text-gray-800'}`}
                                 />
                                 <input
                                     type="date"
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
-                                    placeholder="End date"
                                     className={`w-full px-3 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-800 border border-gray-700 text-white' : 'bg-white border border-gray-200 text-gray-800'}`}
                                 />
-                            </div>
+                            </>
                         )}
                         <button
                             onClick={() => setSearchMode(searchMode === 'item' ? 'date' : 'item')}
-                            className={`px-3 sm:px-4 py-3 rounded-xl text-sm font-medium whitespace-nowrap transition-all active:scale-95 ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}
+                            className={`w-full py-3 rounded-xl text-sm font-medium transition-all active:scale-95 ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}
                         >
-                            {searchMode === 'item' ? 'Date' : 'Item'}
+                            {searchMode === 'item' ? 'Filter by Date' : 'Search by Item'}
                         </button>
                     </div>
 
