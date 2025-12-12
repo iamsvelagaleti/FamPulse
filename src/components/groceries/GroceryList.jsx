@@ -884,60 +884,50 @@ export default function GroceryList({ isDark }) {
                                                 }}
                                             >
                                                 <div className="flex items-center gap-3">
-                                                    {/* Avatar */}
-                                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-white text-sm font-semibold overflow-hidden flex-shrink-0">
+                                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-white text-xs sm:text-sm font-semibold overflow-hidden flex-shrink-0">
                                                         {item.added_by_profile?.avatar_url ? (
                                                             <img src={item.added_by_profile.avatar_url} alt="" className="w-full h-full object-cover" />
                                                         ) : (
                                                             item.added_by_profile?.full_name?.[0]?.toUpperCase() || 'U'
                                                         )}
                                                     </div>
-
-                                                    {/* Item Details */}
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <h3 className={`text-xl font-black truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                                                {item.item.name}
-                                                            </h3>
-                                                            <span className={`px-2 py-0.5 text-white text-xs rounded-full font-medium capitalize flex-shrink-0 ${
-                                                                item.item.quantity_type === 'kgs' ? 'bg-gradient-to-r from-purple-400 to-pink-400' :
-                                                                item.item.quantity_type === 'liters' ? 'bg-gradient-to-r from-blue-400 to-cyan-400' :
-                                                                item.item.quantity_type === 'dozens' ? 'bg-gradient-to-r from-orange-400 to-amber-400' :
-                                                                item.item.quantity_type === 'pieces' ? 'bg-gradient-to-r from-green-400 to-emerald-400' :
-                                                                'bg-gradient-to-r from-red-400 to-rose-400'
-                                                            }`}>
-                                {item.item.quantity_type}
-                              </span>
-                                                        </div>
-
+                                                        <h3 className={`text-base sm:text-lg font-bold mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                            {item.item.name}
+                                                        </h3>
+                                                        <span className={`inline-block px-2 py-0.5 text-white text-xs rounded-full font-medium capitalize ${
+                                                            item.item.quantity_type === 'kgs' ? 'bg-gradient-to-r from-purple-400 to-pink-400' :
+                                                            item.item.quantity_type === 'liters' ? 'bg-gradient-to-r from-blue-400 to-cyan-400' :
+                                                            item.item.quantity_type === 'dozens' ? 'bg-gradient-to-r from-orange-400 to-amber-400' :
+                                                            item.item.quantity_type === 'pieces' ? 'bg-gradient-to-r from-green-400 to-emerald-400' :
+                                                            'bg-gradient-to-r from-red-400 to-rose-400'
+                                                        }`}>
+                                                            {item.item.quantity_type}
+                                                        </span>
                                                     </div>
-
-                                                    {/* Quantity Controls */}
-                                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation()
                                                                 updateQuantity(item.id, item.quantity || 1, item.item.quantity_type, -1)
                                                             }}
-                                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all active:scale-95 bg-gradient-to-br from-red-500 to-rose-500 text-white shadow-md"
+                                                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all active:scale-95 bg-gradient-to-br from-red-500 to-rose-500 text-white shadow-md text-lg sm:text-xl font-bold"
                                                         >
-                                                            -
+                                                            −
                                                         </button>
-                                                        <span className={`text-sm font-semibold min-w-[32px] text-center ${isDark ? 'text-white' : 'text-gray-800'}`}>
-                              {item.quantity || 1}
-                            </span>
+                                                        <span className={`text-lg sm:text-xl font-bold min-w-[32px] sm:min-w-[40px] text-center ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                                                            {item.quantity || 1}
+                                                        </span>
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation()
                                                                 updateQuantity(item.id, item.quantity || 1, item.item.quantity_type, 1)
                                                             }}
-                                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all active:scale-95 bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-md"
+                                                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all active:scale-95 bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-md text-lg sm:text-xl font-bold"
                                                         >
                                                             +
                                                         </button>
                                                     </div>
-
-
                                                 </div>
 
                                                 {/* Swipe Hint */}
