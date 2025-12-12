@@ -66,7 +66,8 @@ export const AuthProvider = ({ children }) => {
                 data: {
                     full_name: fullName,
                     phone: phone
-                }
+                },
+                emailRedirectTo: undefined
             }
         })
         return { data, error }

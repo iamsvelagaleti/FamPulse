@@ -14,18 +14,30 @@ export default function JoinFamily({ onClose, onJoined }) {
         setError('')
 
         try {
+            const cleanCode = inviteCode.trim().toUpperCase()
+            console.log('Looking for invite code:', cleanCode)
+            
+            // Debug: Check all families
+            const { data: allFamilies } = await supabase
+                .from('families')
+                .select('id, name, invite_code')
+            console.log('All families in database:', allFamilies)
+            
             // Find family by invite code
             const { data: family, error: familyError } = await supabase
                 .from('families')
-                .select('id, name')
-                .eq('invite_code', inviteCode.trim().toUpperCase())
+                .select('id, name, invite_code')
+                .eq('invite_code', cleanCode)
                 .single()
 
+            console.log('Family lookup result:', { family, familyError })
+
             if (familyError) {
+                console.log('Family error details:', familyError)
                 if (familyError.code === 'PGRST116') {
                     setError('Invalid invite code. Please check and try again.')
                 } else {
-                    throw familyError
+                    setError(`Database error: ${familyError.message}`)
                 }
                 return
             }
@@ -42,6 +54,8 @@ export default function JoinFamily({ onClose, onJoined }) {
                 setError('You are already a member of this family!')
                 return
             }
+            
+            console.log('Adding user to family:', { familyId: family.id, userId: user.id })
 
             // Add to family
             const { error: insertError } = await supabase
@@ -68,11 +82,11 @@ export default function JoinFamily({ onClose, onJoined }) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white/90 backdrop-blur-xl border border-gray-200 rounded-3xl shadow-2xl max-w-sm w-full p-6">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-2xl max-w-sm w-full p-6">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800">Join Family</h2>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-2xl">
+                    <h2 className="text-2xl font-bold text-gray-900">Join Family</h2>
+                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-2xl active:scale-95">
                         ×
                     </button>
                 </div>
@@ -86,7 +100,7 @@ export default function JoinFamily({ onClose, onJoined }) {
                             type="text"
                             value={inviteCode}
                             onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                            className="w-full px-4 py-4 bg-white/60 backdrop-blur-md border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800 placeholder-gray-500 text-center text-2xl font-mono tracking-wider"
+                            className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500 text-center text-2xl font-mono tracking-wider transition-colors"
                             placeholder="ABC12XYZ"
                             maxLength={8}
                             required
@@ -103,14 +117,14 @@ export default function JoinFamily({ onClose, onJoined }) {
                         <button
                             type="submit"
                             disabled={loading || inviteCode.length !== 8}
-                            className="flex-1 bg-blue-500/80 backdrop-blur-md text-white py-3 rounded-2xl font-semibold hover:bg-blue-600/80 disabled:opacity-50 border border-blue-400"
+                            className="flex-1 bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600 disabled:opacity-50 transition-colors active:scale-95"
                         >
                             {loading ? 'Joining...' : 'Join Family'}
                         </button>
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 bg-white/60 backdrop-blur-md text-gray-700 py-3 rounded-2xl font-semibold hover:bg-white/80 border border-gray-300"
+                            className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors active:scale-95"
                         >
                             Cancel
                         </button>

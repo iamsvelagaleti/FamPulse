@@ -184,12 +184,17 @@ export const useFamily = () => {
     // Join family by invite code
     const joinFamilyByCode = async (inviteCode) => {
         try {
+            const cleanCode = inviteCode.trim().toUpperCase()
+            console.log('useFamily: Looking for invite code:', cleanCode)
+            
             // Find family by invite code
             const { data: family, error: familyError } = await supabase
                 .from('families')
-                .select('id')
-                .eq('invite_code', inviteCode)
+                .select('id, name, invite_code')
+                .eq('invite_code', cleanCode)
                 .single()
+                
+            console.log('useFamily: Family lookup result:', { family, familyError })
 
             if (familyError || !family) {
                 return { success: false, error: 'Invalid invite code' }
