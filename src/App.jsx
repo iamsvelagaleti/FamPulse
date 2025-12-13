@@ -9,9 +9,7 @@ import Countdowns from './components/countdowns/Countdowns'
 import HamburgerMenu from './components/HamburgerMenu'
 import FamilySwitcher from './components/family/FamilySwitcher'
 import NotificationBell from './components/NotificationBell'
-import BiometricLock from './components/BiometricLock'
 import { useFamily } from './hooks/useFamily'
-import { useBiometric } from './hooks/useBiometric'
 import { useState, useEffect } from 'react'
 import { Menu, Home, ShoppingCart, Milk, User, Clock } from 'lucide-react'
 import './App.css'
@@ -19,8 +17,6 @@ import './App.css'
 function AppContent() {
     const {user, profile, loading} = useAuth()
     const { currentFamily } = useFamily()
-    const { isEnabled } = useBiometric()
-    const [isUnlocked, setIsUnlocked] = useState(false)
     const [showFamilyManagement, setShowFamilyManagement] = useState(false)
     const [showMenu, setShowMenu] = useState(false)
     const [currentModule, setCurrentModule] = useState(() => localStorage.getItem('currentModule') || 'dashboard')
@@ -47,10 +43,6 @@ function AppContent() {
 
     if (!user) {
         return <AuthForm/>
-    }
-
-    if (user && isEnabled && !isUnlocked) {
-        return <BiometricLock onUnlock={() => setIsUnlocked(true)} />
     }
 
     return (
