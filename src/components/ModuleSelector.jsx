@@ -3,7 +3,7 @@ import { ShoppingCart, Milk, Check } from 'lucide-react'
 export default function ModuleSelector({ currentModule, onSelect, onClose, isDark }) {
     const modules = [
         { id: 'groceries', name: 'Groceries', icon: ShoppingCart },
-        { id: 'milk', name: 'Milk Delivery', icon: Milk }
+        { id: 'milk', name: 'Milkman', icon: Milk }
     ]
 
     return (

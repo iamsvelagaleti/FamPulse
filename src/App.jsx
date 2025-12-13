@@ -2,24 +2,23 @@ import {AuthProvider, useAuth} from './contexts/AuthContext'
 import AuthForm from './components/auth/AuthForm'
 import FamilyDashboard from './components/family/FamilyDashboard'
 import EditProfile from './components/profile/EditProfile'
-import UserMenu from './components/UserMenu'
 import FamilyManagement from './components/family/FamilyManagement'
 import GroceryList from './components/groceries/GroceryList'
 import MilkDelivery from './components/milk/MilkDelivery'
-import ModuleSelector from './components/ModuleSelector'
+import Countdowns from './components/countdowns/Countdowns'
+import HamburgerMenu from './components/HamburgerMenu'
+import FamilySwitcher from './components/family/FamilySwitcher'
 import { useFamily } from './hooks/useFamily'
-import { useState, useEffect, useRef } from 'react'
-import { Moon, Sun } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Menu, Home, ShoppingCart, Milk, User, Clock } from 'lucide-react'
 import './App.css'
 
 function AppContent() {
     const {user, profile, loading} = useAuth()
     const { currentFamily } = useFamily()
-    const [showEditProfile, setShowEditProfile] = useState(false)
-    const [showUserMenu, setShowUserMenu] = useState(false)
     const [showFamilyManagement, setShowFamilyManagement] = useState(false)
-    const [showModuleSelector, setShowModuleSelector] = useState(false)
-    const [currentModule, setCurrentModule] = useState(() => localStorage.getItem('currentModule') || 'groceries')
+    const [showMenu, setShowMenu] = useState(false)
+    const [currentModule, setCurrentModule] = useState(() => localStorage.getItem('currentModule') || 'dashboard')
     const [isDark, setIsDark] = useState(false)
 
     useEffect(() => {
@@ -47,76 +46,49 @@ function AppContent() {
 
     return (
         <div className="min-h-screen safe-area relative overflow-hidden" style={{ background: isDark ? 'linear-gradient(to bottom right, #1f2937, #111827)' : '#f9fafb' }}>
-
-
             {/* Header */}
-            <header className={`fixed top-0 left-0 right-0 border-0 border-b mb-4 sm:mb-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`} style={{ zIndex: 200 }}>
+            <header className={`fixed top-0 left-0 right-0 border-0 border-b ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`} style={{ zIndex: 200 }}>
                 <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
-                    {/* Logo */}
-                    <div className="relative">
-                        <button onClick={() => setShowModuleSelector(!showModuleSelector)} className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all active:scale-95 ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
-                            <img src="/maskable-icon-512x512.png" alt="FamPulse" className="w-10 h-10 rounded-2xl shadow-lg" />
-                            <span className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>FamPulse</span>
-                            <svg className={`w-5 h-5 transition-transform ${showModuleSelector ? 'rotate-180' : ''} ${isDark ? 'text-gray-400' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        {showModuleSelector && (
-                            <ModuleSelector
-                                currentModule={currentModule}
-                                onSelect={setCurrentModule}
-                                onClose={() => setShowModuleSelector(false)}
-                                isDark={isDark}
-                            />
-                        )}
-                    </div>
-
-                    {/* User Button */}
-                    <button
-                        onClick={() => setShowUserMenu(!showUserMenu)}
-                        className="avatar ios-button shadow-lg overflow-hidden"
+                    <button 
+                        onClick={() => setShowMenu(true)}
+                        className={`p-2 rounded-xl transition-all active:scale-95 ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
                     >
-                        {profile?.avatar_url ? (
-                            <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                        ) : (
-                            profile?.full_name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'
-                        )}
+                        <Menu className={`w-6 h-6 ${isDark ? 'text-white' : 'text-gray-800'}`} />
                     </button>
+                    <FamilySwitcher isDark={isDark} />
+                    <div className="flex items-center gap-3">
+                        {currentModule === 'dashboard' && <Home className={`w-7 h-7 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
+                        {currentModule === 'groceries' && <ShoppingCart className={`w-7 h-7 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
+                        {currentModule === 'milk' && <Milk className={`w-7 h-7 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
+                        {currentModule === 'profile' && <User className={`w-7 h-7 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
+                        {currentModule === 'countdowns' && <Clock className={`w-7 h-7 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
+                        <span className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                            {currentModule === 'dashboard' ? 'Dashboard' : currentModule === 'groceries' ? 'Groceries' : currentModule === 'milk' ? 'Milkman' : currentModule === 'countdowns' ? 'Countdowns' : 'Profile'}
+                        </span>
+                    </div>
+                    <div className="w-10" />
                 </div>
             </header>
 
-            {showModuleSelector && <div className="fixed inset-0 z-[190]" onClick={() => setShowModuleSelector(false)} />}
+            {/* Hamburger Menu */}
+            <HamburgerMenu
+                isOpen={showMenu}
+                onClose={() => setShowMenu(false)}
+                currentModule={currentModule}
+                onModuleChange={setCurrentModule}
+                onOpenFamilyManagement={() => setShowFamilyManagement(true)}
+                isDark={isDark}
+                onToggleDark={() => setIsDark(!isDark)}
+            />
 
             {/* Main Content */}
-            <main className="relative px-3 sm:px-4 py-4 sm:py-6 max-w-6xl mx-auto pb-safe mt-[72px]" style={{ zIndex: 1 }}>
+            <main className="relative max-w-6xl mx-auto pb-safe mt-[72px]" style={{ zIndex: 1 }}>
+                {currentModule === 'dashboard' && <FamilyDashboard isDark={isDark} />}
                 {currentModule === 'groceries' && <GroceryList isDark={isDark} />}
                 {currentModule === 'milk' && <MilkDelivery isDark={isDark} familyId={currentFamily?.id} />}
+                {currentModule === 'profile' && <EditProfile isDark={isDark} onProfileUpdated={() => { setCurrentModule('dashboard'); window.location.reload() }} />}
+                {currentModule === 'countdowns' && <Countdowns isDark={isDark} />}
             </main>
-
-            {/* User Menu Overlay */}
-            {showUserMenu && (
-                <UserMenu
-                    onClose={() => setShowUserMenu(false)}
-                    onOpenFamilyManagement={() => {
-                        setShowUserMenu(false)
-                        setShowFamilyManagement(true)
-                    }}
-                    onOpenEditProfile={() => {
-                        setShowUserMenu(false)
-                        setShowEditProfile(true)
-                    }}
-                    isDark={isDark}
-                    onToggleTheme={() => setIsDark(!isDark)}
-                />
-            )}
-
-            {/* Edit Profile Modal */}
-            {showEditProfile && (
-                <EditProfile
-                    onClose={() => setShowEditProfile(false)}
-                    onProfileUpdated={() => window.location.reload()}
-                />
-            )}
 
             {/* Family Management Modal */}
             {showFamilyManagement && (

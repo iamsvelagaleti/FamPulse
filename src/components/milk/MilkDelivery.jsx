@@ -7,6 +7,7 @@ import { useFamily } from '../../hooks/useFamily'
 export default function MilkDelivery({ isDark, familyId }) {
     const { user } = useAuth()
     const { familyMembers } = useFamily()
+    const [activeTab, setActiveTab] = useState('active')
     const [currentDate, setCurrentDate] = useState(new Date())
     const [defaultQuantity, setDefaultQuantity] = useState(0.5)
     const [deliveries, setDeliveries] = useState({})
@@ -411,62 +412,31 @@ export default function MilkDelivery({ isDark, familyId }) {
     const nextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'} flex items-center gap-2`}>
-                    <Milk className="w-7 h-7" />
-                    Milk Delivery
-                </h2>
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => {
-                            const tomorrow = new Date()
-                            tomorrow.setDate(tomorrow.getDate() + 1)
-                            setChangeQuantity(defaultQuantity)
-                            setChangeToDate(tomorrow.toISOString().split('T')[0])
-                            setShowChangeModal(true)
-                        }}
-                        className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all active:scale-95 flex items-center gap-2 ${isDark ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-green-500 hover:bg-green-600 text-white shadow-sm'}`}
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                        </svg>
-                        <span className="hidden sm:inline">Change Qty</span>
-                    </button>
-                    <button
-                        onClick={() => {
-                            if (!vendorWhatsapp) {
-                                alert('Please add vendor WhatsApp in settings first')
-                                return
-                            }
-                            const tomorrow = new Date()
-                            tomorrow.setDate(tomorrow.getDate() + 1)
-                            setCancelToDate(tomorrow.toISOString().split('T')[0])
-                            setShowCancelModal(true)
-                        }}
-                        className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all active:scale-95 flex items-center gap-2 ${isDark ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-red-500 hover:bg-red-600 text-white shadow-sm'}`}
-                    >
-                        <XCircle className="w-4 h-4" />
-                        <span className="hidden sm:inline">Cancel</span>
-                    </button>
-                    <button
-                        onClick={() => { setMonthlyQuantity(defaultQuantity); setShowMonthlyChanges(true) }}
-                        className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all active:scale-95 flex items-center gap-2 ${isDark ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-500 hover:bg-blue-600 text-white shadow-sm'}`}
-                    >
-                        <Calendar className="w-4 h-4" />
-                        <span className="hidden sm:inline">Monthly</span>
-                    </button>
-                    <button
-                        onClick={() => setShowSettings(true)}
-                        className={`px-3 py-2 rounded-lg transition-all active:scale-95 flex items-center gap-2 ${isDark ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800 shadow-sm'}`}
-                    >
-                        <Settings className="w-4 h-4" />
-                        <span className="hidden sm:inline">Settings</span>
-                    </button>
-                </div>
+        <div className="space-y-4 px-3 sm:px-4 py-4 sm:py-6">
+            {/* Tabs */}
+            <div className={`flex gap-2 p-1 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white shadow-sm'}`}>
+                <button
+                    onClick={() => setActiveTab('active')}
+                    className={`flex-1 py-3 rounded-lg font-semibold transition-all ${activeTab === 'active' ? (isDark ? 'bg-cyan-600 text-white' : 'bg-cyan-500 text-white') : (isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900')}`}
+                >
+                    Active
+                </button>
+                <button
+                    onClick={() => setActiveTab('history')}
+                    className={`flex-1 py-3 rounded-lg font-semibold transition-all ${activeTab === 'history' ? (isDark ? 'bg-cyan-600 text-white' : 'bg-cyan-500 text-white') : (isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900')}`}
+                >
+                    History
+                </button>
+                <button
+                    onClick={() => setShowSettings(true)}
+                    className={`px-4 py-3 rounded-lg font-semibold transition-all ${isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                >
+                    <Settings className="w-5 h-5" />
+                </button>
             </div>
 
-            <div className={`p-4 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}>
+            {activeTab === 'active' && (
+            <div className={`p-3 sm:p-4 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}>
                 <div className="flex items-center justify-between mb-4">
                     <button onClick={prevMonth} className={`p-2 rounded-lg transition-all active:scale-95 ${isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-800'}`}>
                         <ChevronLeft className="w-5 h-5" />
@@ -563,7 +533,73 @@ export default function MilkDelivery({ isDark, familyId }) {
                         )
                     })}
                 </div>
+                
+                <div className="flex gap-2 mt-4">
+                    <button
+                        onClick={() => {
+                            const tomorrow = new Date()
+                            tomorrow.setDate(tomorrow.getDate() + 1)
+                            setChangeQuantity(defaultQuantity)
+                            setChangeToDate(tomorrow.toISOString().split('T')[0])
+                            setShowChangeModal(true)
+                        }}
+                        className={`flex-1 py-3 rounded-xl font-semibold transition-all active:scale-95 flex items-center justify-center gap-2 ${isDark ? 'bg-green-600 text-white' : 'bg-green-500 text-white shadow-sm'}`}
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                        </svg>
+                        Change Qty
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (!vendorWhatsapp) {
+                                alert('Please add vendor WhatsApp in settings first')
+                                return
+                            }
+                            const tomorrow = new Date()
+                            tomorrow.setDate(tomorrow.getDate() + 1)
+                            setCancelToDate(tomorrow.toISOString().split('T')[0])
+                            setShowCancelModal(true)
+                        }}
+                        className={`flex-1 py-3 rounded-xl font-semibold transition-all active:scale-95 flex items-center justify-center gap-2 ${isDark ? 'bg-red-600 text-white' : 'bg-red-500 text-white shadow-sm'}`}
+                    >
+                        <XCircle className="w-5 h-5" />
+                        Cancel Delivery
+                    </button>
+                </div>
             </div>
+            )}
+
+            {activeTab === 'history' && (
+                <div className={`p-3 sm:p-4 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}>
+                    <h3 className={`text-lg font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Payment History</h3>
+                    {lastPayment ? (
+                        <div className={`p-4 rounded-xl ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Last Payment</span>
+                                <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                    {new Date(lastPayment.payment_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                </span>
+                            </div>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Period</span>
+                                <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                    {new Date(lastPayment.from_date || lastPayment.to_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })} - {new Date(lastPayment.to_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                                </span>
+                            </div>
+                            <div className={`flex items-center justify-between pt-2 border-t ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
+                                <span className={`font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Amount</span>
+                                <span className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>₹{lastPayment.amount.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-center py-8">
+                            <Calendar className={`w-12 h-12 mx-auto mb-2 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} />
+                            <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>No payment history yet</p>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {showMonthlyChanges && (
                 <div onClick={() => setShowMonthlyChanges(false)} className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>

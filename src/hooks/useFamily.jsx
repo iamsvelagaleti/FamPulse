@@ -38,8 +38,21 @@ export const useFamily = () => {
 
             setFamilies(userFamilies)
 
-            // Set first family as current if exists
-            if (userFamilies.length > 0 && !currentFamily) {
+            // Get active family from profile or use first family
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('active_family_id')
+                .eq('id', user.id)
+                .single()
+
+            if (profile?.active_family_id) {
+                const activeFamily = userFamilies.find(f => f.id === profile.active_family_id)
+                if (activeFamily) {
+                    setCurrentFamily(activeFamily)
+                } else if (userFamilies.length > 0) {
+                    setCurrentFamily(userFamilies[0])
+                }
+            } else if (userFamilies.length > 0) {
                 setCurrentFamily(userFamilies[0])
             }
         } catch (err) {
@@ -63,10 +76,17 @@ export const useFamily = () => {
         user:profiles!user_id (
           id,
           full_name,
+          nickname,
           email,
           phone,
-          avatar_url
-        )
+          avatar_url,
+          date_of_birth,
+          anniversary_date,
+          spouse_id,
+          gender
+        ),
+        father_id,
+        mother_id
       `)
                 .eq('family_id', familyId)
 
@@ -242,6 +262,17 @@ export const useFamily = () => {
         }
     }, [currentFamily])
 
+    const switchFamily = async (familyId) => {
+        const family = families.find(f => f.id === familyId)
+        if (family) {
+            setCurrentFamily(family)
+            await supabase
+                .from('profiles')
+                .update({ active_family_id: familyId })
+                .eq('id', user.id)
+        }
+    }
+
     return {
         families,
         currentFamily,
@@ -254,6 +285,7 @@ export const useFamily = () => {
         updateMemberRole,
         removeMember,
         refreshFamilies: fetchFamilies,
-        joinFamilyByCode
+        joinFamilyByCode,
+        switchFamily
     }
 }

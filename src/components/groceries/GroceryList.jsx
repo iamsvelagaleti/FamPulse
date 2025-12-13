@@ -44,6 +44,8 @@ export default function GroceryList({ isDark }) {
     const [showBillModal, setShowBillModal] = useState(false)
     const [boughtItems, setBoughtItems] = useState([])
     const [showAddPrices, setShowAddPrices] = useState(false)
+    const [selectedMember, setSelectedMember] = useState(null)
+    const [familyMembers, setFamilyMembers] = useState([])
 
     const quantityTypes = ['kgs', 'liters', 'dozens', 'pieces', 'packets']
 
@@ -56,7 +58,18 @@ export default function GroceryList({ isDark }) {
         if (data) {
             setFamilyId(data.family_id)
             setUserRole(data.role)
+            fetchFamilyMembers(data.family_id)
         }
+    }
+
+    const fetchFamilyMembers = async (fId) => {
+        const { data } = await supabase
+            .from('family_members')
+            .select('*, user:profiles!user_id(id, full_name, phone, avatar_url)')
+            .eq('family_id', fId)
+            .in('role', ['admin', 'admin_lite'])
+            .neq('user_id', user.id)
+        setFamilyMembers(data || [])
     }
 
     const fetchCategories = useCallback(async () => {
@@ -424,6 +437,20 @@ export default function GroceryList({ isDark }) {
         setNewItem({ name: searchTerm, quantityType: '', categoryId: '' })
     }, [searchTerm])
 
+    useEffect(() => {
+        const handleEsc = (e) => {
+            if (e.key === 'Escape') {
+                setShowManageCategories(false)
+                setShowAddPrices(false)
+                setShowBillModal(false)
+                setDeleteConfirm(null)
+                setSelectedMember(null)
+            }
+        }
+        window.addEventListener('keydown', handleEsc)
+        return () => window.removeEventListener('keydown', handleEsc)
+    }, [])
+
     // 🔥 REAL-TIME SYNCHRONIZATION - Auto-updates across all family members
     useEffect(() => {
         if (!familyId) return
@@ -509,7 +536,8 @@ export default function GroceryList({ isDark }) {
     }
 
     return (
-        <>
+        <div className="px-3 sm:px-4 py-4 sm:py-6">
+
             {/* Manage Categories Modal */}
             {showManageCategories && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -738,49 +766,12 @@ export default function GroceryList({ isDark }) {
             )}
 
         <div className="space-y-4">
-            <div className="flex items-center justify-between flex-wrap gap-2">
-                <h2 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'} flex items-center gap-2`}>
-                    <ShoppingCart className="w-6 h-6 sm:w-7 sm:h-7" />
-                    Groceries
-                </h2>
-                <div className="flex gap-2">
-                    {!showHistory && (
-                        <button
-                            onClick={() => {
-                                if (shoppingMode) {
-                                    setShowBillModal(true)
-                                } else {
-                                    setShoppingMode(true)
-                                }
-                            }}
-                            className={`px-3 sm:px-4 py-2 rounded-xl flex items-center gap-1 sm:gap-2 transition-all active:scale-95 shadow-lg text-sm sm:text-base ${shoppingMode ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' : isDark ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-800'}`}
-                        >
-                            <ShoppingCart className="w-4 h-4" />
-                            <span className="hidden sm:inline">{shoppingMode ? 'End Shopping' : 'Shop Mode'}</span>
-                        </button>
-                    )}
-                    <button
-                        onClick={() => setShowManageCategories(true)}
-                        className="px-3 sm:px-4 py-2 rounded-xl flex items-center gap-1 sm:gap-2 transition-all active:scale-95 bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg text-sm sm:text-base"
-                    >
-                        <Tag className="w-4 h-4" />
-                        <span className="hidden sm:inline">Categories</span>
-                    </button>
-                    <button
-                        onClick={() => setShowHistory(!showHistory)}
-                        className="px-3 sm:px-4 py-2 rounded-xl flex items-center gap-1 sm:gap-2 transition-all active:scale-95 bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg text-sm sm:text-base"
-                    >
-                        {showHistory ? <List className="w-4 h-4" /> : <History className="w-4 h-4" />}
-                        <span className="hidden sm:inline">{showHistory ? 'Shopping List' : 'History'}</span>
-                    </button>
-                </div>
-            </div>
-
             {!showHistory ? (
                 <>
-                    {/* Search Bar */}
+                    {/* Search Bar + Buttons */}
                     {!shoppingMode && (
-                        <div className="relative">
+                        <div className="flex gap-2">
+                            <div className="relative flex-1">
                             <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-400'}`} />
                             <input
                                 type="text"
@@ -791,8 +782,8 @@ export default function GroceryList({ isDark }) {
                                 className={`w-full pl-10 pr-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-800 border border-gray-700 text-white placeholder-gray-500' : 'bg-white border border-gray-200 text-gray-800 placeholder-gray-400'}`}
                             />
 
-                        {/* Search Suggestions */}
-                        {(suggestions.length > 0 || showAddNew) && (
+                            {/* Search Suggestions */}
+                            {(suggestions.length > 0 || showAddNew) && (
                             <div className={`absolute top-full mt-2 w-full rounded-2xl overflow-hidden z-10 ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200 shadow-lg'}`}>
                                 {suggestions.map((item) => (
                                     <button
@@ -859,7 +850,56 @@ export default function GroceryList({ isDark }) {
                                     </div>
                                 )}
                             </div>
-                        )}
+                            )}
+                            </div>
+                            <button
+                                onClick={() => setShoppingMode(true)}
+                                className="px-3 py-2 rounded-xl flex items-center gap-2 transition-all active:scale-95 bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg flex-shrink-0"
+                            >
+                                <ShoppingCart className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={() => setShowManageCategories(true)}
+                                className="px-3 py-2 rounded-xl flex items-center gap-2 transition-all active:scale-95 bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg flex-shrink-0"
+                            >
+                                <Tag className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={() => setShowHistory(!showHistory)}
+                                className="px-3 py-2 rounded-xl flex items-center gap-2 transition-all active:scale-95 bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg flex-shrink-0"
+                            >
+                                <History className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
+                    
+                    {shoppingMode && (
+                        <div className="flex items-center gap-3 overflow-x-auto">
+                            {familyMembers.map((member) => (
+                                <a
+                                    key={member.id}
+                                    href={`tel:${member.user.phone}`}
+                                    className="flex flex-col items-center gap-1 min-w-[60px]"
+                                >
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-white text-sm font-bold overflow-hidden shadow-lg">
+                                        {member.user.avatar_url ? (
+                                            <img src={member.user.avatar_url} alt="" className="w-full h-full object-cover" />
+                                        ) : (
+                                            member.user.full_name?.charAt(0) || 'U'
+                                        )}
+                                    </div>
+                                    <p className="text-xs font-semibold text-gray-700 truncate max-w-[60px]">
+                                        {member.user.full_name?.split(' ')[0]}
+                                    </p>
+                                </a>
+                            ))}
+                            <button
+                                onClick={() => setShowBillModal(true)}
+                                className="px-4 py-2 rounded-xl flex items-center gap-2 transition-all active:scale-95 bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg ml-auto flex-shrink-0"
+                            >
+                                <ShoppingCart className="w-4 h-4" />
+                                End Shopping
+                            </button>
                         </div>
                     )}
 
@@ -1192,7 +1232,14 @@ export default function GroceryList({ isDark }) {
             ) : (
                 // History View
                 <div className="space-y-4">
-                    <div className="relative">
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setShowHistory(false)}
+                            className="px-3 py-2 rounded-xl flex items-center gap-2 transition-all active:scale-95 bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg flex-shrink-0"
+                        >
+                            <List className="w-4 h-4" />
+                        </button>
+                        <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <input
                             type="text"
@@ -1201,6 +1248,7 @@ export default function GroceryList({ isDark }) {
                             placeholder="Search by item name..."
                             className={`w-full pl-10 pr-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-800 border border-gray-700 text-white placeholder-gray-500' : 'bg-white border border-gray-200 text-gray-800 placeholder-gray-400'}`}
                         />
+                        </div>
                     </div>
 
                     <div className="space-y-2">
@@ -1284,6 +1332,6 @@ export default function GroceryList({ isDark }) {
                 </div>
             )}
         </div>
-        </>
+        </div>
     )
 }

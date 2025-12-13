@@ -77,9 +77,16 @@ export default function JoinFamily({ onClose, onJoined }) {
 
             if (insertError) throw insertError
 
-            alert(`Successfully joined ${family.name}!`)
-            onJoined()
-            onClose()
+            const notification = document.createElement('div')
+            notification.className = 'fixed top-20 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in'
+            notification.textContent = `Successfully joined ${family.name}!`
+            document.body.appendChild(notification)
+            setTimeout(() => notification.remove(), 2000)
+            
+            setTimeout(() => {
+                onJoined()
+                onClose()
+            }, 500)
         } catch (err) {
             setError(err.message)
         } finally {
