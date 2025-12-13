@@ -1,9 +1,13 @@
-import { Home, ShoppingCart, Milk, User, LogOut, X, Moon, Sun, Clock } from 'lucide-react'
+import { Home, ShoppingCart, Milk, User, LogOut, X, Moon, Sun, Clock, Fingerprint } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useBiometric } from '../hooks/useBiometric'
 import { supabase } from '../supabaseClient'
+import { useState } from 'react'
 
 export default function HamburgerMenu({ isOpen, onClose, currentModule, onModuleChange, onOpenFamilyManagement, isDark, onToggleDark }) {
     const { user, profile } = useAuth()
+    const { isSupported, isEnabled, enable, disable } = useBiometric()
+    const [loading, setLoading] = useState(false)
 
     const menuItems = [
         { id: 'dashboard', name: 'Dashboard', icon: Home },
@@ -101,6 +105,24 @@ export default function HamburgerMenu({ isOpen, onClose, currentModule, onModule
                         {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                         <span className="font-medium">{isDark ? 'Light Mode' : 'Dark Mode'}</span>
                     </button>
+                    {isSupported && (
+                        <button
+                            onClick={async () => {
+                                setLoading(true)
+                                if (isEnabled) {
+                                    disable()
+                                } else {
+                                    await enable()
+                                }
+                                setLoading(false)
+                            }}
+                            disabled={loading}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all active:scale-95 ${isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-700'}`}
+                        >
+                            <Fingerprint className="w-5 h-5" />
+                            <span className="font-medium">{isEnabled ? 'Disable' : 'Enable'} Face ID</span>
+                        </button>
+                    )}
                     <button
                         onClick={handleLogout}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all active:scale-95 ${isDark ? 'hover:bg-red-900/30 text-red-400' : 'hover:bg-red-50 text-red-600'}`}
