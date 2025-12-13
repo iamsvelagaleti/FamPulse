@@ -259,13 +259,13 @@ export default function FamilyDashboard({ isDark }) {
             <div className={`max-w-4xl mx-auto rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white/80 backdrop-blur-xl'} shadow-lg`}>
                 <div className="flex items-stretch">
                     <div className="flex flex-col flex-1 min-w-0">
-                        <div className="flex items-center p-4 sm:p-6">
-                            <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent flex-shrink-0 mr-6">{currentFamily?.name}</h2>
+                        <div className="p-4 sm:p-6">
                             <button 
                                 onClick={() => setShowTree(!showTree)}
-                                className={`p-2 rounded-xl transition-all ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                                className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto active:scale-95 transition-transform"
                             >
-                                <svg className={`w-5 h-5 transition-transform ${showTree ? 'rotate-180' : ''} ${isDark ? 'text-white' : 'text-gray-800'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent">{currentFamily?.name}</h2>
+                                <svg className={`w-6 h-6 transition-transform ${showTree ? 'rotate-180' : ''} ${isDark ? 'text-white' : 'text-gray-800'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
