@@ -93,7 +93,7 @@ export default function FamilyDashboard() {
     if (families.length === 0) {
         return (
             <div className="max-w-md mx-auto animate-slide-up">
-                <div className="glass-card-light p-8">
+                <div className="glass-card-light p-5 sm:p-8">
                     <div className="text-center mb-8">
                         <div className="w-20 h-20 mx-auto mb-4 glass-card flex items-center justify-center">
                             <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,9 +188,9 @@ export default function FamilyDashboard() {
 
     // Family Dashboard
     return (
-        <div className="max-w-4xl mx-auto space-y-6 animate-slide-up">
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 animate-slide-up">
             {/* Family Header Card */}
-            <div className="glass-card-light p-6">
+            <div className="glass-card-light p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                     <div>
                         <h2 className="text-2xl font-bold text-gray-900">{currentFamily?.name}</h2>
@@ -213,7 +213,7 @@ export default function FamilyDashboard() {
 
                 {/* Invite Code Section */}
                 {(currentUserRole === 'admin' || currentUserRole === 'admin_lite') && (
-                    <div className="glass-card p-4">
+                    <div className="glass-card p-3 sm:p-4">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-white/80 mb-1">Invite Code</p>
@@ -247,7 +247,7 @@ export default function FamilyDashboard() {
             </div>
 
             {/* Members List */}
-            <div className="glass-card-light p-6">
+            <div className="glass-card-light p-4 sm:p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Family Members</h3>
                 <div className="space-y-3">
                     {familyMembers.map((member) => (

@@ -1,9 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import { useAuth } from '../../contexts/AuthContext'
 
 export default function AddMemberModal({ familyId, currentUserRole, onClose, onMemberAdded }) {
     const { profile } = useAuth()
+
+    useEffect(() => {
+        const handleEsc = (e) => e.key === 'Escape' && onClose()
+        window.addEventListener('keydown', handleEsc)
+        return () => window.removeEventListener('keydown', handleEsc)
+    }, [onClose])
     const [phone, setPhone] = useState('')
     const [role, setRole] = useState('kid')
     const [loading, setLoading] = useState(false)
@@ -123,7 +129,7 @@ Welcome to the family! 🎉`
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="text-2xl font-bold text-gray-900">Add Member</h3>
                         <button

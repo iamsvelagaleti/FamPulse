@@ -182,7 +182,7 @@ body {
 @keyframes slide-in-up {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(30px);
     }
     to {
         opacity: 1;
@@ -240,7 +240,7 @@ body {
 }
 
 .animate-slide-up {
-    animation: slide-in-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: slide-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-slide-right {
@@ -248,7 +248,7 @@ body {
 }
 
 .animate-fade-in {
-    animation: fade-in 0.3s ease-out forwards;
+    animation: fade-in 0.2s ease-out forwards;
 }
 
 .animate-scale-in {
@@ -329,14 +329,18 @@ body {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 50;
-    padding: 16px;
+    z-index: 150;
+    padding: 12px;
     animation: fade-in 0.2s ease-out;
+}
+
+@media (min-width: 640px) {
+    .modal-overlay {
+        padding: 16px;
+    }
 }
 
 .modal-content {
@@ -410,7 +414,11 @@ body {
 
 @media (max-width: 640px) {
     .glass-card {
-        border-radius: 20px;
+        border-radius: 16px;
+    }
+
+    .glass-card-light {
+        border-radius: 16px;
     }
 
     .modal-content {
@@ -420,8 +428,13 @@ body {
 
     .btn-primary,
     .btn-secondary {
-        padding: 12px 24px;
+        padding: 12px 20px;
         font-size: 15px;
+    }
+
+    /* Reduce padding on mobile */
+    body {
+        padding: 0;
     }
 }
 

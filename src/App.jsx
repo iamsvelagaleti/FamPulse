@@ -7,18 +7,24 @@ import FamilyManagement from './components/family/FamilyManagement'
 import GroceryList from './components/groceries/GroceryList'
 import MilkDelivery from './components/milk/MilkDelivery'
 import ModuleSelector from './components/ModuleSelector'
+import { useFamily } from './hooks/useFamily'
 import { useState, useEffect, useRef } from 'react'
 import { Moon, Sun } from 'lucide-react'
 import './App.css'
 
 function AppContent() {
     const {user, profile, loading} = useAuth()
+    const { currentFamily } = useFamily()
     const [showEditProfile, setShowEditProfile] = useState(false)
     const [showUserMenu, setShowUserMenu] = useState(false)
     const [showFamilyManagement, setShowFamilyManagement] = useState(false)
     const [showModuleSelector, setShowModuleSelector] = useState(false)
-    const [currentModule, setCurrentModule] = useState('groceries')
+    const [currentModule, setCurrentModule] = useState(() => localStorage.getItem('currentModule') || 'groceries')
     const [isDark, setIsDark] = useState(false)
+
+    useEffect(() => {
+        localStorage.setItem('currentModule', currentModule)
+    }, [currentModule])
 
     useEffect(() => {
         document.body.style.background = isDark ? 'linear-gradient(to bottom right, #1f2937, #111827)' : '#f9fafb'
@@ -44,8 +50,8 @@ function AppContent() {
 
 
             {/* Header */}
-            <header className={`relative border-0 border-b mb-6 ${isDark ? 'bg-gray-800/50 border-gray-700' : 'bg-white/50 border-gray-200'}`} style={{ zIndex: 100 }}>
-                <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <header className={`fixed top-0 left-0 right-0 border-0 border-b mb-4 sm:mb-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`} style={{ zIndex: 200 }}>
+                <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
                     {/* Logo */}
                     <div className="relative">
                         <button onClick={() => setShowModuleSelector(!showModuleSelector)} className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all active:scale-95 ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
@@ -79,12 +85,12 @@ function AppContent() {
                 </div>
             </header>
 
-            {showModuleSelector && <div className="fixed inset-0 z-50" onClick={() => setShowModuleSelector(false)} />}
+            {showModuleSelector && <div className="fixed inset-0 z-[190]" onClick={() => setShowModuleSelector(false)} />}
 
             {/* Main Content */}
-            <main className="relative px-4 py-6 max-w-6xl mx-auto pb-safe" style={{ zIndex: 1 }}>
+            <main className="relative px-3 sm:px-4 py-4 sm:py-6 max-w-6xl mx-auto pb-safe mt-[72px]" style={{ zIndex: 1 }}>
                 {currentModule === 'groceries' && <GroceryList isDark={isDark} />}
-                {currentModule === 'milk' && <MilkDelivery isDark={isDark} />}
+                {currentModule === 'milk' && <MilkDelivery isDark={isDark} familyId={currentFamily?.id} />}
             </main>
 
             {/* User Menu Overlay */}

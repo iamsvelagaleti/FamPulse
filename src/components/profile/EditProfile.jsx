@@ -91,7 +91,7 @@ export default function EditProfile({ onClose, onProfileUpdated }) {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-2xl font-bold text-gray-900">Edit Profile</h2>
                         <button

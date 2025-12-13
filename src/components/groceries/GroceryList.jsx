@@ -39,6 +39,11 @@ export default function GroceryList({ isDark }) {
     const [isHistoryDragging, setIsHistoryDragging] = useState(false)
     const dragStartX = useRef(0)
     const currentX = useRef(0)
+    const [shoppingMode, setShoppingMode] = useState(false)
+    const [totalBillAmount, setTotalBillAmount] = useState('')
+    const [showBillModal, setShowBillModal] = useState(false)
+    const [boughtItems, setBoughtItems] = useState([])
+    const [showAddPrices, setShowAddPrices] = useState(false)
 
     const quantityTypes = ['kgs', 'liters', 'dozens', 'pieces', 'packets']
 
@@ -100,6 +105,21 @@ export default function GroceryList({ isDark }) {
             .order('added_at', { ascending: false })
 
         setShoppingList(data || [])
+        
+        // Fetch bought items without prices
+        const { data: bought } = await supabase
+            .from('shopping_list')
+            .select(`
+        *,
+        item:grocery_items(*),
+        added_by_profile:profiles!shopping_list_added_by_fkey(full_name, avatar_url)
+      `)
+            .eq('family_id', familyId)
+            .eq('is_bought', true)
+            .is('price', null)
+            .order('bought_at', { ascending: false })
+        
+        setBoughtItems(bought || [])
     }, [familyId])
 
     const fetchHistory = useCallback(async () => {
@@ -559,6 +579,138 @@ export default function GroceryList({ isDark }) {
                 </div>
             )}
 
+            {/* Add Prices Modal */}
+            {showAddPrices && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className={`max-w-md w-full rounded-2xl p-6 ${isDark ? 'bg-gray-800' : 'bg-white'} max-h-[80vh] overflow-y-auto`}>
+                        <h3 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Add Prices</h3>
+                        <div className="space-y-3 mb-4">
+                            {boughtItems.map(item => (
+                                <div key={item.id} className={`p-3 rounded-xl ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                                    <div className="mb-2">
+                                        <h4 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{item.item.name}</h4>
+                                        <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{item.quantity} {item.item.quantity_type}</p>
+                                    </div>
+                                    <div className="relative">
+                                        <span className={`absolute left-3 top-1/2 -translate-y-1/2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>₹</span>
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            placeholder="0.00"
+                                            onBlur={async (e) => {
+                                                if (e.target.value) {
+                                                    await supabase
+                                                        .from('shopping_list')
+                                                        .update({ price: e.target.value })
+                                                        .eq('id', item.id)
+                                                }
+                                            }}
+                                            className={`w-full pl-8 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-900 border border-gray-600 text-white placeholder-gray-500' : 'bg-white border border-gray-200 text-gray-800 placeholder-gray-400'}`}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <button
+                            onClick={async () => {
+                                for (const item of boughtItems) {
+                                    const { data: updatedItem } = await supabase
+                                        .from('shopping_list')
+                                        .select('price')
+                                        .eq('id', item.id)
+                                        .single()
+                                    
+                                    if (updatedItem?.price) {
+                                        // Delete entry without price
+                                        await supabase
+                                            .from('grocery_history')
+                                            .delete()
+                                            .eq('family_id', item.family_id)
+                                            .eq('item_name', item.item.name)
+                                            .eq('bought_at', item.bought_at)
+                                            .is('price', null)
+                                        
+                                        // Check if entry with price exists
+                                        const { data: existing } = await supabase
+                                            .from('grocery_history')
+                                            .select('id')
+                                            .eq('family_id', item.family_id)
+                                            .eq('item_name', item.item.name)
+                                            .eq('bought_at', item.bought_at)
+                                            .maybeSingle()
+                                        
+                                        if (existing) {
+                                            await supabase
+                                                .from('grocery_history')
+                                                .update({ price: updatedItem.price })
+                                                .eq('id', existing.id)
+                                        } else {
+                                            await supabase.from('grocery_history').insert({
+                                                family_id: item.family_id,
+                                                item_name: item.item.name,
+                                                quantity: item.quantity,
+                                                quantity_type: item.item.quantity_type,
+                                                price: updatedItem.price,
+                                                bought_by: item.bought_by,
+                                                bought_at: item.bought_at
+                                            })
+                                        }
+                                        
+                                        await supabase.from('shopping_list').delete().eq('id', item.id)
+                                    }
+                                }
+                                setShowAddPrices(false)
+                                fetchShoppingList()
+                                fetchHistory()
+                            }}
+                            className={`w-full py-3 rounded-xl font-semibold transition-all active:scale-95 ${isDark ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-800'}`}
+                        >
+                            Save
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Bill Amount Modal */}
+            {showBillModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className={`max-w-sm w-full rounded-2xl p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+                        <h3 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Total Bill Amount</h3>
+                        <input
+                            type="number"
+                            step="0.01"
+                            value={totalBillAmount}
+                            onChange={(e) => setTotalBillAmount(e.target.value)}
+                            placeholder="Enter total bill amount"
+                            className={`w-full px-4 py-3 rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-900 border border-gray-700 text-white placeholder-gray-500' : 'bg-white border border-gray-200 text-gray-800 placeholder-gray-400'}`}
+                        />
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => {
+                                    setShowBillModal(false)
+                                    setTotalBillAmount('')
+                                    setShoppingMode(false)
+                                }}
+                                className={`flex-1 py-3 rounded-xl font-semibold transition-all active:scale-95 ${isDark ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-800'}`}
+                            >
+                                Skip
+                            </button>
+                            <button
+                                onClick={() => {
+                                    // Save total bill amount logic here
+                                    setShowBillModal(false)
+                                    setTotalBillAmount('')
+                                    setShoppingMode(false)
+                                }}
+                                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold transition-all active:scale-95"
+                            >
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Delete Confirmation Modal */}
             {deleteConfirm && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -592,6 +744,21 @@ export default function GroceryList({ isDark }) {
                     Groceries
                 </h2>
                 <div className="flex gap-2">
+                    {!showHistory && (
+                        <button
+                            onClick={() => {
+                                if (shoppingMode) {
+                                    setShowBillModal(true)
+                                } else {
+                                    setShoppingMode(true)
+                                }
+                            }}
+                            className={`px-3 sm:px-4 py-2 rounded-xl flex items-center gap-1 sm:gap-2 transition-all active:scale-95 shadow-lg text-sm sm:text-base ${shoppingMode ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' : isDark ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-800'}`}
+                        >
+                            <ShoppingCart className="w-4 h-4" />
+                            <span className="hidden sm:inline">{shoppingMode ? 'End Shopping' : 'Shop Mode'}</span>
+                        </button>
+                    )}
                     <button
                         onClick={() => setShowManageCategories(true)}
                         className="px-3 sm:px-4 py-2 rounded-xl flex items-center gap-1 sm:gap-2 transition-all active:scale-95 bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg text-sm sm:text-base"
@@ -612,16 +779,17 @@ export default function GroceryList({ isDark }) {
             {!showHistory ? (
                 <>
                     {/* Search Bar */}
-                    <div className="relative">
-                        <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-400'}`} />
-                        <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(toTitleCase(e.target.value))}
-                            placeholder="Search or add grocery item..."
-                            autoComplete="off"
-                            className={`w-full pl-10 pr-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-800 border border-gray-700 text-white placeholder-gray-500' : 'bg-white border border-gray-200 text-gray-800 placeholder-gray-400'}`}
-                        />
+                    {!shoppingMode && (
+                        <div className="relative">
+                            <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-400'}`} />
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(toTitleCase(e.target.value))}
+                                placeholder="Search or add grocery item..."
+                                autoComplete="off"
+                                className={`w-full pl-10 pr-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isDark ? 'bg-gray-800 border border-gray-700 text-white placeholder-gray-500' : 'bg-white border border-gray-200 text-gray-800 placeholder-gray-400'}`}
+                            />
 
                         {/* Search Suggestions */}
                         {(suggestions.length > 0 || showAddNew) && (
@@ -692,10 +860,11 @@ export default function GroceryList({ isDark }) {
                                 )}
                             </div>
                         )}
-                    </div>
+                        </div>
+                    )}
 
                     {/* All Items */}
-                    {allItems.length > 0 && (
+                    {!shoppingMode && allItems.length > 0 && (
                         <div className={`p-4 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}>
                             <div key={refreshKey} className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 {allItems.filter(item => !shoppingList.some(listItem => listItem.item?.id === item.id)).map((item) => (
@@ -860,8 +1029,45 @@ export default function GroceryList({ isDark }) {
                                                     className="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg"
                                                 >
                                                     <Check className="w-5 h-5" />
-                                                    Complete Purchase
+                                                    {shoppingMode ? 'Mark as Bought' : 'Complete Purchase'}
                                                 </button>
+                                            </div>
+                                        </div>
+                                    ) : shoppingMode ? (
+                                        // Shopping Mode - Simple Checkbox
+                                        <div className={`p-4 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}>
+                                            <div className="flex items-center gap-3">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={false}
+                                                    onChange={async () => {
+                                                        await supabase
+                                                            .from('shopping_list')
+                                                            .update({
+                                                                is_bought: true,
+                                                                bought_by: user.id,
+                                                                bought_at: new Date().toISOString()
+                                                            })
+                                                            .eq('id', item.id)
+                                                        await fetchShoppingList()
+                                                    }}
+                                                    className="w-6 h-6 rounded-lg cursor-pointer accent-green-500"
+                                                />
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-white text-xs font-semibold overflow-hidden flex-shrink-0">
+                                                    {item.added_by_profile?.avatar_url ? (
+                                                        <img src={item.added_by_profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        item.added_by_profile?.full_name?.[0]?.toUpperCase() || 'U'
+                                                    )}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                        {item.item.name}
+                                                    </h3>
+                                                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                        {item.quantity} {item.item.quantity_type}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     ) : (
@@ -954,6 +1160,34 @@ export default function GroceryList({ isDark }) {
                             ))
                         )}
                     </div>
+                    
+                    {/* Bought Items - Waiting for Prices */}
+                    {boughtItems.length > 0 && (
+                        <div className={`p-4 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}>
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Bought Items</h3>
+                                <button
+                                    onClick={() => setShowAddPrices(true)}
+                                    className="px-3 py-1 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold"
+                                >
+                                    Add Prices
+                                </button>
+                            </div>
+                            <div className="space-y-2">
+                                {boughtItems.map(item => (
+                                    <div key={item.id} className={`p-3 rounded-xl ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                                        <div className="flex items-center gap-3">
+                                            <Check className="w-5 h-5 text-green-500" />
+                                            <div className="flex-1">
+                                                <h4 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{item.item.name}</h4>
+                                                <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{item.quantity} {item.item.quantity_type}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </>
             ) : (
                 // History View

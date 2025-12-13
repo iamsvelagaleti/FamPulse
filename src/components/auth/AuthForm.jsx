@@ -47,25 +47,21 @@ export default function AuthForm() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 safe-area">
+        <div className="min-h-screen flex items-center justify-center p-3 sm:p-4" style={{ background: '#f9fafb' }}>
             <div className="w-full max-w-md animate-scale-in">
                 {/* Logo & Brand */}
-                <div className="text-center mb-8">
-                    <div className="inline-block p-4 glass-card mb-4">
-                        <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                    </div>
-                    <h1 className="text-5xl font-bold text-white mb-2 tracking-tight">
+                <div className="text-center mb-6">
+                    <img src="/maskable-icon-512x512.png" alt="FamPulse" className="w-20 h-20 rounded-3xl shadow-lg mx-auto mb-4" />
+                    <h1 className="text-4xl font-bold text-gray-800 mb-2 tracking-tight">
                         FamPulse
                     </h1>
-                    <p className="text-white/80 text-lg">
-                        {isLogin ? 'Welcome back!' : 'Join your family'}
+                    <p className="text-gray-600 text-base font-medium">
+                        {isLogin ? 'Sign in to continue' : 'Create your account'}
                     </p>
                 </div>
 
                 {/* Form Card */}
-                <div className="glass-card-light p-8">
+                <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
                     <form onSubmit={handleSubmit} className="space-y-5">
                         {/* Signup Fields */}
                         {!isLogin && (
@@ -78,7 +74,7 @@ export default function AuthForm() {
                                         type="text"
                                         value={fullName}
                                         onChange={(e) => setFullName(e.target.value)}
-                                        className="glass-input-light"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
                                         placeholder="Enter your full name"
                                         required={!isLogin}
                                     />
@@ -108,7 +104,7 @@ export default function AuthForm() {
                                         type="text"
                                         value={inviteCode}
                                         onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                                        className="glass-input-light font-mono text-center tracking-wider"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all font-mono text-center tracking-wider"
                                         placeholder="ABC12XYZ"
                                         maxLength={8}
                                     />
@@ -121,14 +117,14 @@ export default function AuthForm() {
 
                         {/* Email */}
                         <div className="space-y-2">
-                            <label className="block text-sm font-semibold text-gray-700">
+                            <label className="block text-sm font-semibold text-gray-700 text-left">
                                 Email
                             </label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="glass-input-light"
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
                                 placeholder="your@email.com"
                                 required
                             />
@@ -136,14 +132,14 @@ export default function AuthForm() {
 
                         {/* Password */}
                         <div className="space-y-2">
-                            <label className="block text-sm font-semibold text-gray-700">
+                            <label className="block text-sm font-semibold text-gray-700 text-left">
                                 Password
                             </label>
                             <input
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="glass-input-light"
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
                                 placeholder="••••••••"
                                 required
                                 minLength={6}
@@ -168,7 +164,7 @@ export default function AuthForm() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="btn-primary w-full ios-button"
+                            className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold transition-all active:scale-95 disabled:opacity-50"
                         >
                             {loading ? (
                                 <div className="flex items-center justify-center gap-2">
@@ -200,7 +196,7 @@ export default function AuthForm() {
                 </div>
 
                 {/* Footer */}
-                <p className="text-center text-white/60 text-sm mt-6">
+                <p className="text-center text-gray-500 text-sm mt-6">
                     Secure family management with role-based access
                 </p>
             </div>
