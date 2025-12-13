@@ -8,6 +8,7 @@ import MilkDelivery from './components/milk/MilkDelivery'
 import Countdowns from './components/countdowns/Countdowns'
 import HamburgerMenu from './components/HamburgerMenu'
 import FamilySwitcher from './components/family/FamilySwitcher'
+import NotificationBell from './components/NotificationBell'
 import { useFamily } from './hooks/useFamily'
 import { useState, useEffect } from 'react'
 import { Menu, Home, ShoppingCart, Milk, User, Clock } from 'lucide-react'
@@ -45,30 +46,30 @@ function AppContent() {
     }
 
     return (
-        <div className="min-h-screen safe-area relative overflow-hidden" style={{ background: isDark ? 'linear-gradient(to bottom right, #1f2937, #111827)' : '#f9fafb' }}>
-            {/* Header */}
-            <header className={`fixed top-0 left-0 right-0 border-0 border-b ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`} style={{ zIndex: 200 }}>
-                <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
-                    <button 
-                        onClick={() => setShowMenu(true)}
-                        className={`p-2 rounded-xl transition-all active:scale-95 ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                    >
-                        <Menu className={`w-6 h-6 ${isDark ? 'text-white' : 'text-gray-800'}`} />
-                    </button>
+        <div className="min-h-screen safe-area relative" style={{ background: isDark ? 'linear-gradient(to bottom right, #1f2937, #111827)' : '#f9fafb' }}>
+            {/* Floating Bubbles */}
+            <div className="fixed top-4 left-0 right-0 px-4 flex items-center justify-between" style={{ zIndex: 200 }}>
+                <button 
+                    onClick={() => setShowMenu(true)}
+                    className={`p-3 rounded-full shadow-lg transition-all active:scale-95 ${isDark ? 'bg-gray-800' : 'bg-white'}`}
+                >
+                    <Menu className={`w-6 h-6 ${isDark ? 'text-white' : 'text-gray-800'}`} />
+                </button>
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-full shadow-lg ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
                     <FamilySwitcher isDark={isDark} />
-                    <div className="flex items-center gap-3">
-                        {currentModule === 'dashboard' && <Home className={`w-7 h-7 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
-                        {currentModule === 'groceries' && <ShoppingCart className={`w-7 h-7 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
-                        {currentModule === 'milk' && <Milk className={`w-7 h-7 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
-                        {currentModule === 'profile' && <User className={`w-7 h-7 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
-                        {currentModule === 'countdowns' && <Clock className={`w-7 h-7 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
-                        <span className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>
-                            {currentModule === 'dashboard' ? 'Dashboard' : currentModule === 'groceries' ? 'Groceries' : currentModule === 'milk' ? 'Milkman' : currentModule === 'countdowns' ? 'Countdowns' : 'Profile'}
-                        </span>
-                    </div>
-                    <div className="w-10" />
+                    {currentModule === 'dashboard' && <Home className={`w-5 h-5 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
+                    {currentModule === 'groceries' && <ShoppingCart className={`w-5 h-5 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
+                    {currentModule === 'milk' && <Milk className={`w-5 h-5 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
+                    {currentModule === 'profile' && <User className={`w-5 h-5 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
+                    {currentModule === 'countdowns' && <Clock className={`w-5 h-5 ${isDark ? 'text-white' : 'text-gray-800'}`} />}
+                    <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                        {currentModule === 'dashboard' ? 'Dashboard' : currentModule === 'groceries' ? 'Groceries' : currentModule === 'milk' ? 'Milkman' : currentModule === 'countdowns' ? 'Countdowns' : 'Profile'}
+                    </span>
                 </div>
-            </header>
+                <div className={`p-3 rounded-full shadow-lg ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+                    <NotificationBell isDark={isDark} />
+                </div>
+            </div>
 
             {/* Hamburger Menu */}
             <HamburgerMenu
@@ -82,7 +83,7 @@ function AppContent() {
             />
 
             {/* Main Content */}
-            <main className="relative max-w-6xl mx-auto pb-safe mt-[72px]" style={{ zIndex: 1 }}>
+            <main className="relative w-full pb-safe mt-20" style={{ zIndex: 1 }}>
                 {currentModule === 'dashboard' && <FamilyDashboard isDark={isDark} />}
                 {currentModule === 'groceries' && <GroceryList isDark={isDark} />}
                 {currentModule === 'milk' && <MilkDelivery isDark={isDark} familyId={currentFamily?.id} />}

@@ -13,6 +13,10 @@ A family management web application built with React, Vite, Supabase, and Tailwi
 - ✅ Invite Code System
 - ✅ Family Member Management
 - ✅ Secure Row Level Security (RLS)
+- ✅ Real-time Notifications
+- ✅ Grocery List Management
+- ✅ Milk Delivery Tracking
+- ✅ Countdown Events
 
 ## 🛠️ Tech Stack
 
@@ -341,6 +345,7 @@ CREATE TRIGGER on_auth_user_created
    c. Enable RLS and create policies
    d. Create triggers
    e. **Update phone support**: Run `supabase-phone-update.sql`
+   f. **Enable notifications**: Run `supabase-notifications.sql`
 
 6. **Start development server**
    ```bash
@@ -428,9 +433,20 @@ fam-pulse/
 3. **WhatsApp Invite**: Automatically opens WhatsApp with invite message
 4. **Share Invite Code**: Quick share buttons in family dashboard
 
+## 🔔 Notifications
+
+Real-time notifications for all family activities:
+- Member added/removed
+- Role changes
+- Grocery items added/purchased
+- Milk delivery updates
+- Countdown events created
+
+Notifications appear in the bell icon in the header and update in real-time across all devices.
+
 ## 🚧 Upcoming Features
 
-- [ ] Avatar upload
+- [ ] Push notifications (mobile)
 - [ ] Family settings
 - [ ] Transaction tracking (future)
 - [ ] Budget management (future)

@@ -241,7 +241,7 @@ export default function FamilyDashboard({ isDark }) {
     return (
         <div className="px-3 sm:px-4 py-4 sm:py-6 space-y-4">
             {upcomingEvents.length > 0 && (
-                <div className={`max-w-4xl mx-auto rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white/80 backdrop-blur-xl'} shadow-lg p-4`}>
+                <div className={`rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white/80 backdrop-blur-xl'} shadow-lg p-4`}>
                     <h3 className={`text-lg font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>Upcoming Events</h3>
                     <div className="flex gap-3 overflow-x-auto pb-2">
                         {upcomingEvents.map((event, i) => (
@@ -256,7 +256,7 @@ export default function FamilyDashboard({ isDark }) {
                     </div>
                 </div>
             )}
-            <div className={`max-w-4xl mx-auto rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white/80 backdrop-blur-xl'} shadow-lg`}>
+            <div className={`rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white/80 backdrop-blur-xl'} shadow-lg`}>
                 <div className="flex items-stretch">
                     <div className="flex flex-col flex-1 min-w-0">
                         <div className="p-4 sm:p-6">

@@ -536,7 +536,7 @@ export default function GroceryList({ isDark }) {
     }
 
     return (
-        <div className="px-3 sm:px-4 py-4 sm:py-6">
+        <div className="py-4">
 
             {/* Manage Categories Modal */}
             {showManageCategories && (
@@ -765,7 +765,7 @@ export default function GroceryList({ isDark }) {
                 </div>
             )}
 
-        <div className="space-y-4">
+        <div className="space-y-4 px-4">
             {!showHistory ? (
                 <>
                     {/* Search Bar + Buttons */}

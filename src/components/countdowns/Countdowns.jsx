@@ -170,7 +170,7 @@ export default function Countdowns({ isDark }) {
 
     return (
         <div className="px-3 sm:px-4 py-4 sm:py-6">
-            <div className={`max-w-4xl mx-auto rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white/80 backdrop-blur-xl'} shadow-lg p-4 sm:p-6`}>
+            <div className={`rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white/80 backdrop-blur-xl'} shadow-lg p-4 sm:p-6`}>
                 <div className="flex justify-between items-center mb-6">
                     <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Countdowns</h2>
                     {(currentUserRole === 'admin' || currentUserRole === 'admin_lite') && (
